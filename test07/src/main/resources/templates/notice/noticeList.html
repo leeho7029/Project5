@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항</title>
+</head>
+<body>
+<table>
+  <thead>
+    <tr>
+      <th>번호</th>
+      <th>제목</th>
+      <th>작성자</th>
+      <th>작성일</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="n:${noticeList}">
+      <td th:text="${n.seq}"></td>
+      <td>
+      <a th:text="${n.title}" th:href="@{/notice/noticeDetail/(seq=${n.seq})}"></a>
+      </td>
+      <td th:text="${n.id}"></td>
+      <td th:text="${n.regdate}"></td>
+    </tr>
+  </tbody>
+</table>
+<div>
+  <a th:href="@{/notice/noticeInsert}">글쓰기</a>
+</div>
+</body>
+</html>

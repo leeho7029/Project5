@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link id="headPath" th:data-contextPath="${#httpServletRequest.getContextPath()}"/>
+    <div th:block th:replace="fragment/head :: fragment-head"></div>
+    <title>로그인 </title>
+</head>
+
+<body>
+<div th:replace="fragment/header :: fragment-header"></div>
+<div class="hero">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5">
+                <div class="intro-excerpt">
+                    <h1>회원가입</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="vh-50">
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                     class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <form th:action="@{/user/registration}" action="#" autocomplete="off" th:object="${user}" method="post">
+                    <div style="margin:10px 100px">
+                        <label th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></label>
+                        <input type="text" th:field="*{loginId}" placeholder="LogInId" class="form-control" required>
+                    </div>
+                    <div style="margin :10px 100px">
+                        <label th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></label>
+                        <input type="text" th:field="*{userName}" placeholder="userName" class="form-control" required>
+                    </div>
+                    <div style="margin :10px 100px">
+                        <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+                        <input type="password" th:field="*{password}" placeholder="password" class="form-control" required>
+                    </div>
+                    <div style="margin :10px 100px">
+                        <input type="password" placeholder="passwordConfirm" name="passwordConfirm" id="passwordConfirm" class="form-control" required>
+                    </div>
+                    <div style="margin :10px 100px">
+                        <button type="submit" class="form-control btn btn-dark">회원가입</button>
+                    </div>
+                    <span th:utext="${successMessage}"></span>
+                </form>
+</div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
