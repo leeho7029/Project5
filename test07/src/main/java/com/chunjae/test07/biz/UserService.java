@@ -37,9 +37,12 @@ public class UserService implements UserDetailsService {
         user.setActive(1);
         userMapper.setUserInfo(user);
         Role role = roleMapper.getRoleInfo("USER");
+        System.out.println(role);
         UserRole userRole = new UserRole();
+        System.out.println(user);
         userRole.setRoleId(role.getId());
-        userRole.setUserId(user.getUserId());
+        User user2 = userMapper.findUserByLoginId(user.getLoginId());
+        userRole.setUserId(user2.getId());
         userRoleMapper.setUserRoleInfo(userRole);
     }
 
@@ -49,3 +52,4 @@ public class UserService implements UserDetailsService {
         return new UserPrincipal(user);
     }
 }
+

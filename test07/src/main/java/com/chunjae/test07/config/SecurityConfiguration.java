@@ -1,6 +1,8 @@
 package com.chunjae.test07.config;
 
 import com.chunjae.test07.biz.UserService;
+import com.chunjae.test07.domain.UserFailLogin;
+import com.chunjae.test07.util.CustomAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -38,6 +41,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authenticationProvider(userService));
     }
 
+    @Bean
+    public UserFailLogin loginFailHandler(){
+        return new UserFailLogin();
+    }
+
     //접근 보안 설정 관리자
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -50,13 +58,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable().cors().disable()
                 .formLogin()
                 .loginPage("/login")
-                .failureUrl("/login?error=true")
-                .defaultSuccessUrl("/home")
+                .failureHandler(loginFailHandler())
+                //.failureUrl("/user/login.do?error=true")
+                .defaultSuccessUrl("/")
                 .usernameParameter("loginId")
                 .passwordParameter("password")
                 .and()
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")
                 .and()
                 .exceptionHandling()
                 .accessDeniedPage("/access-denied");

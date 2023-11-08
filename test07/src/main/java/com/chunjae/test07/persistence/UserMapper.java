@@ -10,5 +10,4 @@ import org.springframework.stereotype.Component;
 public interface UserMapper {
     User findUserByLoginId(@Param("loginId") String loginId);
     int setUserInfo(@Param("param") User param);
-
 }

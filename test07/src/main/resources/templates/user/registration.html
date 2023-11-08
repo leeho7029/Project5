@@ -28,7 +28,7 @@
                      class="img-fluid" alt="Sample image">
             </div>
             <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                <form th:action="@{/user/registration}" action="#" autocomplete="off" th:object="${user}" method="post">
+                <form th:action="@{/registration}"  autocomplete="off" th:object="${user}" method="post">
                     <div style="margin:10px 100px">
                         <label th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"></label>
                         <input type="text" th:field="*{loginId}" placeholder="LogInId" class="form-control" required>
@@ -42,12 +42,12 @@
                         <input type="password" th:field="*{password}" placeholder="password" class="form-control" required>
                     </div>
                     <div style="margin :10px 100px">
-                        <input type="password" placeholder="passwordConfirm" name="passwordConfirm" id="passwordConfirm" class="form-control" required>
+                        <label th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></label>
+                        <input type="password" th:field="*{passwordConfirm}" placeholder="passwordConfirm" class="form-control" required>
                     </div>
                     <div style="margin :10px 100px">
                         <button type="submit" class="form-control btn btn-dark">회원가입</button>
                     </div>
-                    <span th:utext="${successMessage}"></span>
                 </form>
 </div>
         </div>

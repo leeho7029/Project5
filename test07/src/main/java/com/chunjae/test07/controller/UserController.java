@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         User user = new User();
         modelAndView.addObject("user", user);
-        modelAndView.setViewName("user/registration");
+        modelAndView.setViewName("/user/registration");
 
         return modelAndView;
     }
@@ -59,12 +59,11 @@ public class UserController {
         }
 
         if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult.hasErrors());
             modelAndView.setViewName("/user/registration");
         } else {
             userService.saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
-            modelAndView.setViewName("/user/registration");
+            modelAndView.setViewName("redirect:/");
         }
         return modelAndView;
     }
@@ -80,7 +79,7 @@ public class UserController {
 
         modelAndView.addObject("userName", "Welcome " + userPrincipal.getName() + " (" + userPrincipal.getId() + ")");
         modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-        modelAndView.setViewName("/user/home");
+        modelAndView.setViewName("/user/index");
         return modelAndView;
     }
 
