@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <th:block th:insert="~{layout/head :: head}"></th:block>
+        <link rel="stylesheet" th:href="@{/css/sub.css}">
+        <title>T셀파::</title>
+    </head>
+    <body>
+        <th:block th:insert="~{layout/header :: header}"></th:block>
+
+        <!-- content 영역 시작 -->
+        <!-- content 영역 종료 -->
+
+        <th:block th:insert="~{layout/footer :: footer}"></th:block>
+        <script th:src="@{/js/sub.js}"></script>
+    </body>
+</html>

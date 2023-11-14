@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.team35.per.BookMapper">
+    <select id="BookList" resultType="com.tsherpa.team35.entity.Book">
+        select * from Book
+    </select>
+
+    <insert id="BookInsert">
+        insert into Book(isbn, image,title,author,publisher,pubdate,discount,req_no)values(#{isbn},#{bookImage},#{boookTitle},#{bookAuthor},#{publisher},#{pubdate},#{discount},#{reqNo})
+    </insert>
+
+</mapper>

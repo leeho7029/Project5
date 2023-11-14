@@ -4,7 +4,7 @@
     <!-- 로그 파일이 저장될 경로 -->
     <property name="LOG_PATH" value="log"/>
     <!-- 로그 파일 이름 -->
-    <property name="LOG_FILE_NAME" value="kimRestApiLog"/>
+    <property name="LOG_FILE_NAME" value="team35RestApiLog"/>
     <!-- 로그 출력 패턴 -->
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%logger{40}] - %msg%n"/>
     <!-- 로그 레벨 -->
@@ -51,4 +51,5 @@
         <!-- 위에 설정한 파일 설정 추가 -->
         <appender-ref ref="FILE"/>
     </root>
+
 </configuration>

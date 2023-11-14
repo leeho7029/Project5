@@ -1,64 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+      <th:block th:insert="~{layout/head :: head}"></th:block>
+      <link rel="stylesheet" th:href="@{/css/sub.css}">
+      <title>T셀파::로그인</title>
+    </head>
+  <body>
 
-<head>
-    <link id="headPath" th:data-contextPath="${#httpServletRequest.getContextPath()}"/>
-    <div th:block th:replace="fragment/head :: fragment-head"></div>
-    <title>로그인 </title>
-</head>
+      <!-- content 영역 시작 -->
+      <section class="vh-100 bg-primary">
+          <div class="container py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                  <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                      <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                          <div class="card-body p-5 text-center">
+                              <form th:action="@{/login}" method="post">
+                                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                  <div class="form-outline mb-4 text-center">
+                                      <a href="/"><img th:src="@{/image/common/logo.png}" style="width:30%" /></a>
+                                  </div>
 
-<body>
-<div th:replace="fragment/header :: fragment-header"></div>
-<div class="hero">
-    <div class="container">
-        <div class="row justify-content-between">
-            <div class="col-lg-5">
-                <div class="intro-excerpt">
-                    <h1>로그인</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                                  <div class="form-outline mb-4">
+                                      <input type="text" placeholder="아이디를 입력하세요." class="form-control" id="loginId" name="loginId" required />
+                                      <label class="form-label" for="loginId" style="display:none;">아이디</label>
+                                  </div>
 
-    <section class="vh-50">
-        <div class="container-fluid h-custom">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-md-9 col-lg-6 col-xl-5">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-                         class="img-fluid" alt="Sample image">
-                </div>
-                <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                    <form th:action="@{/login}" method="post">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                        <div class="row gy-4" style="margin-top: 100px;">
-                            <div class="col-lg-12">
-                                <h2 style="text-align: center;">로그인</h2>
-                            </div>
-                            <div class="col-md-9" style="margin: 10px auto;">
-                                <input type="text" id="loginId" name="loginId" class="form-control" placeholder="id 입력" required>
-                            </div>
-                            <div class="col-md-9" style="margin:10px auto;">
-                                <input type="password" id="password" name="password" class="form-control" placeholder="pw 입력" required>
-                            </div>
-                            <div class="col-md-9" style="margin: 10px auto;">
-                                <button type="submit" class="form-control btn btn-dark">LOGIN</button>
-                            </div>
-                            <div th:text="${exception}">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div
-                class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
-            <!-- Copyright -->
-            <div class="text-white mb-3 mb-md-0">
-                Copyright © 2023. All rights reserved.
-            </div>
-        </div>
-    </section>
+                                  <div class="form-outline mb-4">
+                                      <input type="password" placeholder="*******" class="form-control" id="password" name="password" required />
+                                      <label class="form-label" for="password" style="display:none;">비밀번호</label>
+                                  </div>
 
-</body>
+                                  <div class="row mb-4 text-center" th:if="${exception eq 'error01'}">
+                                      <div class="col">
+                                          <p style="color:red">아이디 또는 비밀번호가 올바르지 않거나 가입이 되지 않았습니다.</p>
+                                      </div>
+                                  </div>
+
+                                  <div class="row mb-4 text-center" th:if="${param.authError}">
+                                      <div class="col">
+                                          <p style="color:red">토큰 정보가 만료되었습니다. 토큰을 갱신하시기 바랍니다.</p>
+                                      </div>
+                                  </div>
+
+                                  <!-- 2 column grid layout for inline styling -->
+                                  <div class="row mb-4">
+                                      <div class="col">
+                                          <!-- Simple link -->
+                                          <a href="#!" onclick="return false;">비밀번호 찾기</a>
+                                      </div>
+                                  </div>
+
+                                  <!-- Submit button -->
+                                  <button type="submit" class="btn btn-primary btn-block mb-4">로그인</button>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <!-- content 영역 종료 -->
+
+      <script th:src="@{/js/sub.js}"></script>
+      <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  </body>
 </html>
