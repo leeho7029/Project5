@@ -3,8 +3,6 @@
 <br><br>
 
 ## 🖥️ 프로젝트 : TSHERPA (2023.11.13 - 2023.11.22)
-<p align="center"><img alt="list" src="https://github.com/jungleGOGO/project05/assets/138674233/0a30aee5-38d0-42cd-b158-dafa17ae5462"></p>
-<br>
 <p align="center"><img alt="list" src="https://github.com/jungleGOGO/project05/assets/138674233/dff6156e-625e-4c46-81e9-daa7e99a37dd"></p>
 <br><br>
 
