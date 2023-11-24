@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <th:block th:insert="~{layout/head :: head}"></th:block>
+        <link rel="stylesheet" th:href="@{/css/sub.css}">
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+        <title>T셀파::</title>
+        <style>
+            #conversation {
+                width:40%;
+                margin:0 auto;position:relative;overflow:hidden;
+                border: 1px solid var(--primary);
+                border-radius:1%;padding:0.5em;}
+
+            #chatting {
+                height: 500px;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding-right: 0.7em;
+                padding-left:0.2em;
+            }
+            #chatting::-webkit-scrollbar {
+                margin-left:0.2em;
+                width:10px;
+            }
+            #chatting::-webkit-scrollbar-thumb {
+                background-color:var(--primary);
+                border-radius: 10px;
+                background-clip:padding-box;
+                border:2px solid transparent;
+            }
+
+            .task-tooltip {
+                border: var(--primary) solid 1px;
+                border-radius: 5px;
+                color: #333;
+                font-size: 12px;
+                font-weight: 500;
+                height: auto;
+                letter-spacing: -0.25px;
+                margin-top: 6.8px;
+                padding: 5px 11px;
+                position: relative;
+                width: fit-content;
+                z-index: 100;
+            }
+
+            .task-tooltip::after {
+                border-color: #fff transparent;
+                border-style: solid;
+                border-width: 0 6px 8px 6.5px;
+                content: '';
+                display: block;
+                left: calc(-0.9em - -2px);
+                position: absolute;
+                top: 10px;
+                width: 0;
+                z-index: 1;
+                transform: rotate(270deg);
+            }
+
+            .task-tooltip::before {
+                border-color: var(--primary) transparent;
+                border-style: solid;
+                border-width: 0 6px 8px 6.5px;
+                content: '';
+                display: block;
+                left: -0.9em;
+                position: absolute;
+                top: 10px;
+                width: 0;
+                z-index: 0;
+                transform: rotate(270deg);
+            }
+
+            .right .task-tooltip {background-color:#ede1d7}
+            .right .task-tooltip::after {border-color:#ede1d7 transparent;left:unset;right:calc(-0.9em - -2px);top:unset;bottom:10px;transform: rotate(90deg);}
+            .right .task-tooltip::before {left:unset;right:-0.9em;top:unset;bottom:10px;transform: rotate(90deg);}
+            .left .task-tooltip {background-color:#c9a688}
+            .left .task-tooltip::after {border-color:#c9a688 transparent;}
+
+            #dropdownMenuButton1::after {display:none;}
+
+            #productArea {position:relative;border-bottom:var(--primary) 1px solid;}
+            #productArea > .dropdown {position: absolute;right: 0;top: 50%;margin-top: -19px;}
+        </style>
+    </head>
+    <body>
+        <th:block th:insert="~{layout/header :: header}"></th:block>
+
+        <!-- content 영역 시작 -->
+        <div id="main-content" class="container">
+            <div class="row">
+                <div class="col-md-12 p-0">
+                    <div id="conversation">
+                        <div id="productArea" class="mb-3">
+                            <h2 th:text="'[ ' + ${productNm} + ' ]'"></h2>
+                            <div class="dropdown">
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><button class="dropdown-item" onclick="repCheck()">신고하기</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="chatting" class="pb-3"></div>
+                        <form class="form-inline mt-1">
+                            <div class="form-group" style="display:inline-block;width:calc(100% - 80px)">
+                                <input type="text" id="message" name="message" class="form-control" placeholder="메시지 내용">
+                            </div>
+                            <button id="send" class="btn btn-primary" type="submit" style="width:76px;">보내기</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-6">
+
+                </div>
+            </div>
+            <div class="row justify-content-md-center mt-5">
+                <div class="col-md-2 btn-group">
+                    <button class="btn btn-primary" onclick="return history.go(-1)">목록</button>
+                </div>
+            </div>
+        </div>
+        <!-- content 영역 종료 -->
+
+        <th:block th:insert="~{layout/footer :: footer}"></th:block>
+        <script th:src="@{/js/sub.js}"></script>
+        <script th:src="@{/js/sockjs.min.js}"></script>
+        <script th:src="@{/js/stomp.min.js}"></script>
+        <script th:inline="javascript">
+            let stompClient = null;
+            let roomId = [[${roomId}]];
+            let chatList = [[${chatList}]];
+            let loginId = [[${loginId}]];
+
+            let productId = [[${productId}]];
+            let productTable = [[${productTable}]];
+
+            let child;
+
+            function repCheck(){
+                let params;
+                let url;
+                if(productTable === "market") {
+                    params = {"marketNo" : productId };
+                    url = "/report/repCheckMar";
+                }
+                if(productTable === "request") {
+                    params = {"reqNo" : productId };
+                    url = "/report/repCheck";
+                }
+
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    dataType: "json",
+                    data: params,
+                    success:function(result) {
+                        if(result == false) {
+                            console.log(result);
+                            alert("이미 신고한 회원입니다.");
+                        } else{
+                            if(productTable === "market") {child = window.open("/report/getReportMar?marketNo=" + productId, "child", "width=900, height=800");}
+                            if(productTable === "request") {child = window.open("/report/getReportReq?reqNo=" + productId, "child", "width=900, height=800");}
+                        }
+                    },
+                    error:function(res) {
+                        alert("로그인 후 다시 시도해주세요.");
+                        console.log(res)
+                    }
+                });
+            }
+
+            document.getElementById('send').addEventListener('click', function() {
+                var chattingDiv = document.getElementById('chatting');
+                chattingDiv.scrollTop = chattingDiv.scrollHeight;
+            });
+
+        </script>
+        <script th:src="@{/js/chat.js}"></script>
+    </body>
+</html>

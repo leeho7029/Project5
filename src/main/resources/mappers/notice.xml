@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.NoticeMapper">
+
+    <select id="getList" resultType="com.tsherpa.pro05.entity.Notice">
+        select * from notice order by regdate desc LIMIT #{postStart}, #{postCount}
+    </select>
+
+    <select id="getCount" resultType="integer">
+        select count(*) from notice
+    </select>
+
+    <select id="getNotice" resultType="com.tsherpa.pro05.entity.Notice">
+        select * from notice where no=#{no}
+    </select>
+
+    <insert id="noticeInsert" parameterType="map">
+        insert into notice values (default, #{param.title}, #{param.content}, 1, default, default)
+    </insert>
+
+    <update id="noticeUpdate" parameterType="map">
+        update notice set title=#{param.title}, content=#{param.content} where no=#{param.no}
+    </update>
+
+    <delete id="noticeDelete">
+        delete from notice where no=#{no}
+    </delete>
+
+    <update id="cntUpdate" parameterType="map">
+        update notice set cnt=cnt+1 where no=#{no}
+    </update>
+
+</mapper>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+
+    <title>T셀파</title>
+    <!-- Bootstrap 5 JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* 탭 크기 조정을 위한 CSS */
+        #myTab .nav-link {
+            font-size: 1.2em; /* 폰트 크기 증가 */
+            padding: 16px 30px; /* 패딩 조정 (상하, 좌우) */
+        }
+
+        .userEdit{
+            width: 50%;
+            float: left;
+            height: 50px;
+            position: relative;
+            text-align: center;
+            border-bottom: 2px solid white;
+            border-right: 2px solid white;
+            cursor: pointer;
+        }
+        p {
+            margin-top: 12px;
+        }
+        .pwEdit{
+            width: 50%;
+            float: right;
+            height: 50px;
+            text-align: center;
+            background-color: #efefef;
+            border-bottom: 2px solid white;
+            cursor: pointer;
+
+        }
+
+        .editContent p{
+            text-align: left;
+            margin-bottom: 2px;
+        }
+
+    </style>
+
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    window.onload = function() {
+        var msg = [[${msg}]];
+        if (msg != null && msg !== '') {
+            alert(msg);
+        }
+    };
+    /*]]>*/
+</script>
+
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+    <div class="container py-5">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">MyPage</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">MyPage</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">정보 수정</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-5">
+<!--    <h2 class="mb-4">MyPage</h2>-->
+    <!-- Bootstrap 탭 컨테이너 -->
+    <div class="row">
+
+        <div class="col-8" style=" margin: 0 auto; padding: 0">
+            <a class="btn btn-primary w-25 py-3" th:href="@{/mypage}" type="button" style="float: left"><&nbsp;&nbsp; 마이페이지</a>
+        </div>
+        <div class="col-8" style="background-color: #e7dbd2;  margin: 0 auto; padding: 0">
+            <div class="userEdit">
+                <p>회원 정보 수정</p>
+            </div>
+            <div class="pwEdit" th:onclick="|window.location.href='@{/pwEdit}'|">
+                <p>비밀번호 변경</p>
+            </div>
+
+            <div class="editContent">
+                <div class="card-body p-5 text-center">
+                    <form th:action="@{/userEdit}" autocomplete="off" th:object="${user}" method="post">
+
+
+                        <div class="form-outline mb-4" style="margin-top: 20px">
+                            <p>아이디</p>
+                            <label th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">아이디</label>
+                            <input type="text" th:field="*{loginId}" placeholder="아이디를 입력하세요." class="form-control" readonly />
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <p>이름</p>
+                            <label th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">이름</label>
+                            <input type="text" th:field="*{userName}" placeholder="이름을 입력하세요." class="form-control" readonly />
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <p>이메일</p>
+                            <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}">이메일</label>
+                            <input type="email" th:field="*{email}" placeholder="이메일을 입력하세요." class="form-control" required />
+                        </div>
+
+
+                        <div class="form-outline mb-4">
+                            <p>전화번호</p>
+                            <label th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}">전화번호</label>
+                            <input type="text" th:field="*{tel}" placeholder="010-XXXX-XXXX" class="form-control" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" required />
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <p>생년월일</p>
+                            <label th:if="${#fields.hasErrors('birth')}" th:errors="*{birth}">생년월일</label>
+                            <input type="date" th:field="*{birth}" class="form-control" required />
+                        </div>
+
+                        <div class="form-outline mb-1">
+                            <p>주소</p>
+                            <label th:if="${#fields.hasErrors('addr1')}" th:errors="*{addr1}">기본주소</label>
+                            <input type="text" th:field="*{addr1}" placeholder="기본주소를 입력해주세요." id="address1" class="form-control" required readonly />
+                        </div>
+
+                        <div class="form-outline mb-1">
+                            <input type="text" th:field="*{addr2}" placeholder="상세주소를 입력해주세요." id="address2" class="form-control"  />
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <input type="text" th:field="*{postcode}" placeholder="우편번호를 입력해주세요." id="postcode" class="form-control" style="width:65%;display:inline-block;" required readonly />
+                            <button type="button" id="post_btn" onclick="findAddr()" class="btn btn-outline-primary" style="width:calc(35% - 15px);margin-left:10px;display:inline-block;">우편번호 검색</button>
+                        </div>
+
+<!--                        <div class="mb-4 text-center" th:if="${exception eq 'error01'}">-->
+<!--                            <div class="col">-->
+<!--                                <p style="color:red">아이디 또는 비밀번호가 올바르지 않거나 가입이 되지 않았습니다.</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <div class="mb-4 text-center" th:utext="${successMessage}">
+                            <div class="col">
+                                <p th:utext="${successMessage}">토큰 정보가 만료되었습니다. 토큰을 갱신하시기 바랍니다.</p>
+                            </div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block mb-4">수정</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- content 영역 종료 -->
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+
+<script th:src="@{/js/common.js}"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</body>
+</html>

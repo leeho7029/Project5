@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <th:block th:insert="~{layout/head :: head}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+  <title>T셀파</title>
+
+  <style>
+    .quote-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* 수직 중앙 정렬 */
+      align-items: center; /* 수평 중앙 정렬 */
+      height: 100vh; /* 화면 전체 높이만큼 사용 */
+    }
+
+    .quote-text form {
+      width: 100%; /* 폼의 너비를 100%로 설정 */
+    }
+
+    .col-lg-6 {
+      position: relative;
+    }
+
+    .col-lg-6 img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (max-width: 992px) {
+      .quote-text,
+      .col-lg-6 {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Spinner End -->
+
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+  <div class="container py-5">
+    <h1 class="display-3 text-white mb-3 animated slideInDown">마켓</h1>
+    <nav aria-label="breadcrumb animated slideInDown">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+        <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
+        <li class="breadcrumb-item text-white active" aria-current="page">마켓</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<div class="container-fluid bg-light overflow-hidden px-lg-0" style="margin: 6rem 0;">
+  <th:block sec:authorize="isAuthenticated()">
+    <th:block sec:authorize="${hasRole('ADMIN')}">
+      <div class="card w-100" th:if="${!list.isEmpty()}">
+    <div class="card-body p-4">
+      <h5 class="card-title fw-semibold mb-4">신고 - 사유</h5>
+      <div class="table-responsive">
+        <table class="table text-nowrap mb-0 align-middle">
+          <thead class="text-dark fs-4">
+          <tr>
+            <th class="border-bottom-0" width="80">
+              <h6 class="fw-semibold mb-0">#</h6>
+            </th>
+            <th class="border-bottom-0" width="600">
+              <h6 class="fw-semibold mb-0">사유</h6>
+            </th>
+            <th class="border-bottom-0">
+              <h6 class="fw-semibold mb-0">누적신고수</h6>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="report, rpStat : ${list}">
+            <td class="border-bottom-0"><h6 class="fw-semibold mb-0" th:text="${rpStat.index}"></h6></td>
+            <td class="border-bottom-0">
+              <p class="mb-0 fw-normal" th:text="${report.reason}"></p>
+            </td>
+            <td class="border-bottom-0">
+              <p class="mb-0 fw-normal" th:text="${report.reasonCount}"></p>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+    </th:block>
+  </th:block>
+
+  <div class="container quote px-lg-0">
+    <div class="row g-0 mx-lg-0">
+      <div class="col-lg-6 quote-text py-5 wow fadeIn" data-wow-delay="0.5s" style="margin-left: 600px; height: 1600px;">
+        <img th:src="${request.bookImage}" style="width: 423.98px; contain: strict;" alt="bookImage">
+        <div class="p-lg-5 pe-lg-0">
+          <form>
+            <div class="row g-3">
+              <div class="col-12 col-sm-6">
+                <label for="title" class="form-label">제목</label>
+                <input type="hidden" class="form-control border-0" id="title" name="title" th:value="${request.title}" readonly style="height: 55px;">
+                <input type="text" class="form-control border-0" id="reqNo" th:value="${request.reqNo}" readonly style="height: 55px;">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="price" class="form-label">희망가격</label>
+                <input type="text" class="form-control border-0" id="price" th:value="${request.price}" readonly style="height: 55px;">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="discount" class="form-label">최저가격</label>
+                <input type="text" class="form-control border-0" id="discount" th:value="${request.discount}" readonly style="height: 55px;">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="loginId" class="form-label">작성자</label>
+                <input type="text" class="form-control border-0" id="loginId" th:value="${request.loginId}" readonly style="height: 55px;">
+                <input type="hidden" class="form-control border-0" id="reporter" name="reporter" th:value="${request.loginId}" readonly style="height: 55px;">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="addr" class="form-label">거래희망지역</label>
+                <input type="text" class="form-control border-0" id="addr" th:value="${request.addr}" readonly style="height: 55px;">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label for="addr" class="form-label">작성일</label>
+                <input type="text" class="form-control border-0" id="regdate" th:value="${request.regdate}" readonly style="height: 55px;">
+              </div>
+              <div class="col-12">
+                <label for="content" class="form-label">내용</label>
+                <input class="form-control border-0" id="content" th:value="${request.content}" readonly style="height: 150px;">
+              </div>
+              <div class="col-12">
+                <button class="btn btn-primary w-100 py-3" type="button"  th:onclick="|location.href='@{/chat/chat(productNo=${request.reqNo}, productTable=request)}'|">대화하기</button>
+              </div>
+              <hr>
+              <div class="col-12">
+                <button class="btn btn-primary w-100 py-2" type="button">
+                  찜하기
+                  <i class="fa-solid fa-heart" th:if="${chkLiked == 1}" th:onclick="|toggleLike()|" style="color: red"></i>
+                  <i class="fa-solid fa-heart" th:unless="${chkLiked == 1}" th:onclick="|toggleLike()|"></i>
+                </button>
+                <hr>
+                <a th:href="'javascript:void(0);'" th:attr="onclick='openChildWindow(\'' + ${request.reqNo} + '\')'" class="btn btn-primary w-25 py-3">신고하기</a>
+                <a class="btn btn-primary w-25 py-3" th:href="@{/request/requestList}" type="button">목록</a>
+              </div>
+              <div class="col-12">
+                <th:block sec:authorize="${hasRole('USER') || hasRole('ADMIN') }">
+                <a class="btn btn-primary w-25 py-3" th:if="${sid eq request.getLoginId()}" th:href="@{/request/edit(reqNo=${request.reqNo})}" type="button">수정하기</a>
+                <a class="btn btn-primary w-25 py-3" th:if="${sid eq request.getLoginId()}" th:href="@{/request/delete(reqNo=${request.reqNo})}" type="button">삭제하기</a>
+                </th:block>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row g-4" >
+  <div class="col-md-10 col-lg-6 wow fadeInUp" th:each="request: ${requestList}" data-wow-delay="0.1s" style="width: 431.98px;height:430.58px;">
+    <div class="service-item" style="border-color: #000; border-width: 5px; border-style: solid;">
+      <div class="overflow-hidden">
+        <img class="img-fluid" th:src="${request.bookImage}" alt="bookImage" style="width: 407.98px; height: 244.78px;">
+      </div>
+      <div class="p-4 text-center border border-5 border-light border-top-0">
+        <h4 class="mb-3" th:text="${request.title}"></h4>
+        <p>거래희망장소: <span th:text="${request.addr}"></span></p><p>희망가격: <span th:text="${request.price}"></span>원</p>
+        <a class="fw-medium" th:href="@{/request/reqDetail(reqNo=${request.reqNo})}">상세보기<i class="fa fa-arrow-right ms-2"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  function openChildWindow(reqNo) {
+    var child = window.open("/report/getReportReq?reqNo=" + reqNo, "child", "width=900, height=800");
+  }
+</script>
+
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+</body>
+
+</html>

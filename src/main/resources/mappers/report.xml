@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.ReportMapper">
+
+    <resultMap id="Report" type="com.tsherpa.pro05.entity.Report">
+        <result property="reportId" column="report_id" />
+        <result property="reqNo" column="req_no" />
+        <result property="title" column="title" />
+        <result property="loginId" column="login_id" />
+        <result property="reporter" column="reporter" />
+        <result property="reason" column="reason" />
+        <result property="reportDate" column="report_date" />
+        <result property="reportCount" column="report_count" />
+        <result property="reasonCount" column="reason_count" />
+        <result property="reporterCount" column="reporter_count" />
+        <result property="userName" column="user_name" />
+    </resultMap>
+
+    <insert id="reportMarInsert">
+        insert into report (marketNo, login_id, title, reporter, reason) values (#{marketNo}, #{loginId}, #{title}, #{reporter}, #{reason})
+    </insert>
+
+    <insert id="reportReqInsert">
+        insert into report (req_no, login_id, title, reporter, reason) values (#{reqNo}, #{loginId}, #{title} , #{reporter}, #{reason})
+    </insert>
+
+    <select id="reportMarketList" resultType="com.tsherpa.pro05.entity.Report">
+        SELECT
+            a.report_id,
+            b.title,
+            b.marketNo,
+            b.login_id,
+            a.report_date,
+            sub.report_count
+        FROM (
+                 SELECT marketNo, COUNT(marketNo) AS report_count
+                 FROM report
+                 GROUP BY marketNo
+             ) AS sub
+                 JOIN report a ON (sub.marketNo = a.marketNo)
+                 JOIN market b ON (a.marketNo = b.marketNo)
+        GROUP BY b.title
+        ORDER BY a.report_date DESC LIMIT #{postStart}, #{postCount}
+    </select>
+
+    <select id="reportReqList" resultType="com.tsherpa.pro05.entity.Report">
+        SELECT
+            a.report_id,
+            b.title,
+            b.req_no,
+            b.login_id,
+            a.report_date,
+            sub.report_count
+        FROM (
+                 SELECT req_no, COUNT(req_no) AS report_count
+                 FROM report
+                 GROUP BY req_no
+             ) AS sub
+                 JOIN report a ON (sub.req_no = a.req_no)
+                 JOIN request b ON (a.req_no = b.req_no)
+        GROUP BY b.title
+        ORDER BY a.report_date DESC LIMIT #{postStart}, #{postCount}
+        </select>
+
+    <select id="reportTotalMar">
+        select COUNT(*) from report where marketNo
+    </select>
+
+    <select id="reportTotalReq" resultType="integer">
+        SELECT COUNT(*)
+        FROM (
+         SELECT
+             b.title,
+             COUNT(a.report_id) AS report_count
+         FROM report a
+                  JOIN request b ON a.req_no = b.req_no
+         GROUP BY b.title
+             ) AS sub
+    </select>
+
+    <select id="reportCountMar">
+        select count(*) from report where marketNo=#{marketNo}
+    </select>
+
+    <select id="reportCountReq">
+        select count(*) from report where req_no=#{reqNo}
+    </select>
+
+    <select id="reasonReqList" resultType="com.tsherpa.pro05.entity.Report">
+        SELECT a.req_no, b.title, a.reason, sub.reason_count FROM (SELECT reason, COUNT(reason) AS reason_count FROM report GROUP BY reason) AS sub
+        JOIN report a ON(sub.reason=a.reason) JOIN request b ON (a.req_no=b.req_no)
+        WHERE b.req_no=#{reqNo} GROUP BY b.title
+    </select>
+
+    <select id="reasonMarList" resultType="com.tsherpa.pro05.entity.Report">
+        SELECT a.marketNo, a.title, a.reason, sub.reason_count FROM (SELECT reason, COUNT(reason) AS reason_count FROM report GROUP BY reason ) AS sub
+        JOIN report a ON(sub.reason=a.reason)
+        WHERE a.marketNo=#{marketNo} GROUP BY a.title
+    </select>
+
+    <select id="reportUserList" resultType="com.tsherpa.pro05.entity.Report">
+        SELECT a.reporter, b.ACTIVE , b.user_name,  sub.reporter_count FROM (SELECT reporter, COUNT(reporter) AS reporter_count FROM report GROUP BY reporter) AS sub
+        JOIN report a ON(sub.reporter=a.reporter) JOIN user b ON (a.login_id=b.login_id)
+        HAVING COUNT(reporter_count) >0 LIMIT #{postStart}, #{postCount}
+    </select>
+
+    <select id="reportUserCount" resultType="integer">
+        SELECT COUNT(*)
+        FROM (
+                 SELECT b.title, COUNT(a.report_id) AS report_count
+                 FROM report a
+                          JOIN request b ON a.req_no = b.req_no
+                 GROUP BY b.title HAVING COUNT(*) > 0
+             ) AS sub
+    </select>
+
+    <update id="activeUpdate">
+        update user set active = #{active} where login_id= #{loginId}
+    </update>
+
+    <select id="reportchkReq" resultType="integer">
+        SELECT COUNT(*) FROM report WHERE req_no = #{reqNo} AND login_id = #{loginId}
+    </select>
+
+    <select id="reportchkMar" resultType="integer">
+        SELECT COUNT(*) FROM report WHERE marketNo = #{marketNo} AND login_id = #{loginId}
+    </select>
+
+    <select id="userReportList" resultType="com.tsherpa.pro05.entity.Report">
+        select * from report where login_id = #{loginId}
+    </select>
+    <delete id="reportCancel">
+        delete from report where report_id = #{reportId}
+    </delete>
+</mapper>

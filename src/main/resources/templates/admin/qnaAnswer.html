@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>답변글 작성하기 </title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+    <div class="container py-5">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">답변글 작성하기</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-white" href="../">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">QnA</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">작성하기</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="container" style="margin:20px;">
+            <h4><strong>미답변 질문글 작성&nbsp;<i class="fa-solid fa-bell" style="color: #1e1e1f;"></i></strong></h4>
+        </div>
+        <div>
+            <table class="table project-table table-centered table-nowrap table-bordered">
+                <tbody>
+                <tr>
+                    <th class="text-center">제목</th>
+                    <td colspan="3" th:text="${detail.title}"></td>
+                </tr>
+                <tr>
+                    <th class="text-center">작성일</th>
+                    <td th:text="${#dates.format(detail.resdate,'yyyy-MM-dd')}"></td>
+                    <th class="text-center">작성자</th>
+                    <td colspan="3" th:text="${detail.author}"></td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="font-size: 15px;" id="contentQna" class="p-4" th:text="${detail.content}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="btn-group mb-3" style="float:right;">
+                <th:block sec:authorize="isAuthenticated()">
+                    <th:block sec:authorize="${hasRole('USER')}">
+                        <a th:if="${sid ne detail.author}" th:href="@{/qna/list}" style="background-color: #9a683b;" class="btn btn-dark" th:text="목록"></a>
+                    </th:block>
+                    <th:block sec:authorize="${hasRole('USER')}">
+                        <a th:if="${sid eq detail.author}" th:href="@{/qna/list}" style="background-color: #9a683b;" class="btn btn-dark" th:text="목록"></a>
+                        <a th:if="${sid eq detail.author}" th:href="@{/qna/edit(qno=${detail.qno})}" class="btn btn-secondary" th:text="수정"></a>
+                        <a th:if="${sid eq detail.author}" th:href="@{/qna/delete(qno=${detail.qno})}" class="btn btn-dark" th:text="삭제"></a>
+                    </th:block>
+                </th:block>
+            </div>
+        </div>
+        <form th:action="@{/admin/answerInsert}" method="post">
+            <div class="col-12">
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="table-responsive project-list">
+                            <table class="table project-table table-centered table-nowrap">
+                                <tbody>
+                                <tr>
+                                    <th class="text-center" style="vertical-align: middle; width: 15%;">제목</th>
+                                    <td>
+                                        <input type="hidden" th:value="${detail.qno}" name="par" id="par">
+                                        <input type="text" name="title" id="title" class="form-control" placeholder="제목을 입력하세요" required autofocus>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-center" style="vertical-align: middle; width: 15%;">내용</th>
+                                    <td colspan="6" style="font-size: 15px;">
+                                        <textarea name="content" id="content" cols="100" rows="8" maxlength="800" class="single-textarea" style="height: 400px; border: 1px solid #cbcbcb" placeholder="질문 내용을 입력하세요"></textarea>
+                                        <script>
+                                            $(document).ready(function () { $("#content").cleditor(); });
+                                        </script>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div style="float:right;">
+                                <input type="submit" class="btn btn-dark" style="height: 100%" value="등록">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function(){
+        $("#contentQna").html($("#contentQna").text());
+    })
+</script>
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신고완료</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+</head>
+<body>
+    <div style="margin-top: 130px;">
+        <p style="color: #000000; font-weight: bold; font-size:24px; text-align: center;" class="mb-4">신고되었습니다.</p>
+        <div>
+            <button class="btn btn-block" onclick="check()" style="margin: 0 auto; font-weight: 200; width: 130px">닫기</button>
+        </div>
+        <script>
+            function check(){ window.close(); }
+        </script>
+</div>
+</body>
+</html>

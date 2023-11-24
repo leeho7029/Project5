@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <th:block th:insert="~{layout/head :: head}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+  <title>T셀파</title>
+  <style>
+   #addr {display: block;  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:250px;}
+  </style>
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Spinner End -->
+
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+  <div class="container py-5">
+    <h1 class="display-3 text-white mb-3 animated slideInDown">삽니다</h1>
+    <nav aria-label="breadcrumb animated slideInDown">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+        <li class="breadcrumb-item"><a class="text-white" href="#">장터</a></li>
+        <li class="breadcrumb-item text-white active" aria-current="page">삽니다</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<div class="row">
+  <!-- Page Header End -->
+
+</div>
+<!-- Service Start -->
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="section-title text-center">
+      <h1 class="display-5 mb-5">서로간의 예의를 지켜주세요.</h1>
+    </div>
+    <div class="d-flex justify-content-end">
+      <form th:action="@{/request/reqList}" method="get" class="w-50 mb-5">
+        <div class="row">
+          <div class="col mt-2">
+            <select class="form-select" id="type" name="type">
+              <option th:value="T"> 제목 </option>
+              <option th:value="C"> 내용 </option>
+              <option th:value="Y"> 아이디 </option>
+            </select>
+          </div>
+          <div class="col-xl-8 col-lg-12 col-md-12 mt-2">
+            <div class="input-group">
+              <input type="text" class="form-control" id="keyword" name="keyword"
+                     placeholder="검색어를 입력해주세요" autocomplete="off" aria-label="검색어를 입력해주세요"
+                     aria-describedby="button-addon2" th:value="${page.keyword}">
+              <div class="input-group-append">
+                <button class="btn btn-dark" type="submit" id="button-addon2"> 검색</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div style="margin: 8px;">
+        <th:block sec:authorize="hasRole('USER') || hasRole('TEACHER') || hasRole('EMP')">
+          <a class="btn btn-primary px-4" th:href="@{/request/bookSearch}">요청하기</a>
+        </th:block>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-5" >
+     <div class="col-md-6 col-lg-3 border border-1 border-light wow fadeInUp" th:each="request: ${requestList}" data-wow-delay="0.1s" >
+        <div class="service-item">
+          <div class="overflow-hidden">
+            <a th:href="@{/request/reqDetail(reqNo=${request.reqNo})}"><img class="img-fluid" th:src="${request.bookImage}" alt="bookImage" style="width: 407.98px; height: 244.78px;"></a>
+          </div>
+          <div class="p-4 text-center">
+            <h4 th:if="${request.active == '0'}" class="mb-3" th:text="${request.title}"></h4>
+            <h4 th:if="${request.active == '1'}" style="color:#555" class="mb-3" th:text="${'[거래완료]' + request.title}"></h4>
+            <p><span id="addr" th:text="${'희망 가격 : ' + request.price + ' 원'}"></span></p><p>등록일: <span th:text="${#strings.substring(request.regdate.toString(), 0, 10)}"></span></p>
+            <a class="fw-medium" th:href="@{/request/reqDetail(reqNo=${request.reqNo})}">상세보기<i class="fa fa-arrow-right ms-2"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 30px;" th:if="${!requestList.isEmpty()}">
+      <ul class="pagination justify-content-center mb-0">
+        <li th:if="${curPage > 1}" class="page-item">
+          <a th:href="@{|/request/reqList?page=${curPage - 1}|}" class="page-link">
+            <i class="fa-solid fa-arrow-left"></i>
+          </a>
+        </li>
+        <th:block th:each="i: ${#numbers.sequence(page.blockStartNum, page.blockLastNum)}">
+          <li th:class="${i == curPage} ? 'page-item active' : 'page-item'">
+            <a th:href="@{|/request/reqList?page=${i}|}" class="page-link" aria-label="Page ${i}" aria-current="${i == curPage}" th:text="${i}"></a>
+          </li>
+        </th:block>
+        <li th:if="${curPage < page.totalPageCount}" class="page-item">
+          <a th:href="@{|/request/reqList?page=${curPage + 1}|}" class="page-link">
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+<!--      <div id="loadMore" class="text-center mt-4">-->
+<!--        <a href="#" class="btn btn-primary">더 보기</a>-->
+<!--      </div>-->
+    </div>
+  </div>
+</div>
+
+
+<!-- Service End -->
+
+
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square rounded-0 back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+
+
+<!-- Template Javascript -->
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Your existing script for the dynamic loading -->
+<!--<script>-->
+<!--  $(document).ready(function () {-->
+<!--    // 첫 6개 이외의 모든 서비스 항목을 숨김-->
+<!--    $('.service-item:gt(5)').hide();-->
+<!--    // "더 보기" 클릭 시 추가 항목을 표시-->
+<!--    $('#loadMore').on('click', function (e) {-->
+<!--      e.preventDefault();-->
+<!--      $('.service-item:hidden:lt(6)').fadeIn();-->
+<!--      // 모든 항목이 표시되었을 경우 "더 보기" 숨김-->
+<!--      if ($('.service-item:hidden').length === 0) {-->
+<!--        $('#loadMore').fadeOut('slow');-->
+<!--      }-->
+<!--    });-->
+<!--  });-->
+<!--</script>-->
+</body>
+
+</html>

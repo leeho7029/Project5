@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 관리</title>
+    <link rel="shortcut icon" th:href="@{/image/common/logo.ico}">
+    <link rel="stylesheet" th:href="@{/css/styles.min.css}" />
+    <script src="https://kit.fontawesome.com/153ada4eea.js" crossorigin="anonymous"></script>
+    <style>
+        #title {color:#000000; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:700px; }
+    </style>
+</head>
+<body>
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <th:block th:insert="~{layout/adminSide :: adminSide}"></th:block>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper" style="height: 100vh;">
+        <!--  Header Start -->
+        <th:block th:insert="~{layout/adminHeader :: adminHeader}"></th:block>
+        <!--  Header End -->
+        <div class="container-fluid">
+            <div class="col-lg-12 d-flex align-items-stretch" style="margin-top:30px;">
+                <div class="card w-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-semibold mb-4">공지사항<a th:href="@{/admin/noticeInsert}" class="badge bg-primary rounded-3 fw-semibold" >추가</a></h5>
+                        <div class="table-responsive">
+                            <table class="table text-nowrap mb-0 align-middle">
+                                <thead class="text-dark fs-4">
+                                <tr>
+                                    <th class="border-bottom-0" width="80">
+                                        <h6 class="fw-semibold mb-0">#</h6>
+                                    </th>
+                                    <th class="border-bottom-0" width="600">
+                                        <h6 class="fw-semibold mb-0">제목</h6>
+                                    </th>
+                                    <th class="border-bottom-0">
+                                        <h6 class="fw-semibold mb-0">등록일</h6>
+                                    </th>
+                                    <th class="border-bottom-0">
+                                        <h6 class="fw-semibold mb-0">조회수</h6>
+                                    </th>
+                                    <th class="border-bottom-0">
+                                        <h6 class="fw-semibold mb-0">비고</h6>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="notice, noticeStat : ${list}">
+                                    <td class="border-bottom-0"><h6 class="fw-semibold mb-0" th:text="${noticeStat.index}"></h6></td>
+                                    <td class="border-bottom-0">
+                                        <a th:text="${notice.title}" th:href="@{/notice/detail(no = ${notice.no})}" id="title" ></a>
+                                    </td>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </td>
+                                    <td class="border-bottom-0">
+                                        <p class="mb-0 fw-normal" th:text="${#dates.format(notice.regdate,'yyyy-MM-dd')}"></p>
+                                    </td>
+                                    <td class="border-bottom-0">
+                                        <p class="mb-0 fw-normal" th:text="${notice.cnt}"></p>
+                                    </td>
+                                    <td class="border-bottom-0">
+                                        <a class="badge bg-primary rounded-3 fw-semibold" th:href="@{/admin/noticeDelete(no = ${notice.no})}">삭제</a>
+                                        <a class="badge bg-primary rounded-3 fw-semibold" th:href="@{/admin/noticeUpdate(no=${notice.no})}">수정</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${list.isEmpty()}">
+                                    <td colspan="6">공지사항이 없습니다.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top: 30px;" th:if="${!list.isEmpty()}">
+                            <ul class="pagination justify-content-center mb-0">
+                                <li th:if="${curPage > 5}" class="page-item">
+                                    <a th:href="@{|/admin/noticeAdmin?page=${page.blockStartNum - 1}|}" class="page-link">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                    </a>
+                                </li>
+                                <th:block th:each="i: ${#numbers.sequence(page.blockStartNum, page.blockLastNum)}">
+                                    <li th:class="${i == curPage} ? 'page-item active' : 'page-item'">
+                                        <a th:href="@{|/admin/noticeAdmin?page=${i}|}" class="page-link" aria-label="Page ${i}" aria-current="${i == curPage}" th:text="${i}"></a>
+                                    </li>
+                                </th:block>
+                                <li th:if="${page.blockLastNum < page.totalPageCount}" class="page-item">
+                                    <a th:href="@{|/admin/noticeAdmin?page=${page.blockLastNum + 1}|}" class="page-link">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

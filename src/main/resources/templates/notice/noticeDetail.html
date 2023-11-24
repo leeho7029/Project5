@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>공지사항 상세보기</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+    <div class="container py-5">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">공지사항</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-white" href="../">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">공지사항</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">상세보기</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- noticeDetail start-->
+<div class="container-xxl py-5">
+    <div class="container">
+        <section style="padding-top: 0;">
+            <div style="display: flex; justify-content: center;">
+                <div class="card" style="width: 100%;">
+                    <div class="card-body" >
+                        <div class="card-title" style="padding-bottom: 20px; border-bottom: 1px solid;">
+                            <div class="d-flex align-items-center mt-3">
+                                <div class="ms-3">
+                                    <p class="mb-0" style="font-weight: bold; padding-bottom: 5px;"><h3 th:text="${notice.title}"></h3></p>
+                                    <p class="mb-0"><strong>작성자</strong> | <span th:text="${notice.author}"></span> &nbsp; <strong>작성일</strong> | <span th:text="${#dates.format(notice.regdate,'yyyy-MM-dd')}"></span> &nbsp; <strong>조회수</strong> | <span th:text="${notice.cnt}"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-text mt-4">
+                            <div class="ms-3">
+                                <p style="padding-top: 30px; padding-bottom: 100px;}" id="content" th:text="${notice.content}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 100%; margin-top: 30px;">
+                <button class="btn btn-light btn-lg" style="width:200px; float: right; background-color: #ab7442; font-weight: bold; color: #fff;"><a href="/notice/list" style="color: #fff;">목록</a></button>
+            </div>
+        </section>
+    </div>
+</div>
+<!-- noticeDetail end -->
+<script th:inline="javascript">
+    $(document).ready(function(){
+        $("#content").html($("#content").text());
+    })
+</script>
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

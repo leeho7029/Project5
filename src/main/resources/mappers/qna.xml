@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.QnaMapper">
+
+    <select id="getList" resultType="com.tsherpa.pro05.entity.Qna">
+        select qno, title, content, author, resdate, lev, par
+        FROM qna order BY par DESC,lev ASC, qno ASC, qno desc limit #{postStart}, #{postCount}
+    </select>
+
+    <select id="getCount" resultType="integer">
+        select COUNT(*) from qna
+    </select>
+
+    <select id="qnaDetail" resultType="com.tsherpa.pro05.entity.Qna">
+        select * from qna where qno=#{qno}
+    </select>
+
+    <select id="questionDetail" resultType="com.tsherpa.pro05.entity.Qna">
+        select * from qna where par=#{par} and lev=0
+    </select>
+
+    <select id="answerDetail" resultType="com.tsherpa.pro05.entity.Qna">
+        select * from qna where par=#{par} and lev=1
+    </select>
+
+    <insert id="questionInsert">
+        insert into qna values (default, #{title}, #{content}, #{author}, default, 0, default)
+    </insert>
+
+    <select id="noAnswerList" resultType="com.tsherpa.pro05.entity.Qna">
+        <![CDATA[
+        select qno, title, author, resdate from qna where par in (select par from qna group by par having count(par) < 2)
+        order BY qno desc LIMIT #{postStart}, #{postCount}
+        ]]>
+    </select>
+
+    <select id="noAnswerCount" resultType="integer">
+        <![CDATA[
+        select count(*) from qna where par in (select par from qna group by par having count(par)<2)
+        ]]>
+    </select>
+
+    <insert id="answerInsert">
+        insert into qna values (default, #{title}, #{content}, 'admin' , default, 1, #{par})
+    </insert>
+
+    <update id="parUpdate">
+        update qna set par=qno where par=0 and lev=0
+    </update>
+
+    <update id="qnaEdit">
+        update qna set title=#{title}, content=#{content} where qno=#{qno}
+    </update>
+
+    <delete id="qnaDelete">
+        delete from qna where qno=#{qno} or par=#{qno}
+    </delete>
+
+ </mapper>

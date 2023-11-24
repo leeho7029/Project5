@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <title>T셀파</title>
+    <style>
+        .image {
+            max-width: 200px; /* 최대 너비 설정 */
+            max-height: 200px; /* 최대 높이 설정 */
+            /* 다른 스타일 속성들을 필요에 따라 추가할 수 있습니다. */
+        }
+    </style>
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Spinner End -->
+
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+    <div class="container py-5">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">삽니다</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">마켓</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container">
+    <h3>도서 수정하기</h3>
+    <form th:action="@{/request/list2(reqNo=${reqNo})}" method="post" id="searchForm">
+        <input type="text" id="text" name="text" maxlength="50" placeholder="책 제목을 입력해주세요">
+        <button class="btn btn-danger" type="submit" value="검색">검색</button>
+    </form>
+    <input type="hidden" th:value="${reqNo}" name="reqNo" id="reqNo">
+    <table border="1" id="bookTable">
+        <thead>
+        <tr>
+            <th>isbn</th>
+            <th>이미지</th>
+            <th>제목</th>
+            <th>저자</th>
+            <th>출판사</th>
+            <th>출판일</th>
+            <th>가격</th>
+            <th>선택</th>
+        </tr>
+        </thead>
+        <tbody id="bookBody">
+        <tr th:each="book, status : ${books}">
+            <td th:name="isbn">[[${book.isbn}]]</td>
+            <td th:name="image"><img th:src="${book.image}" class="image" th:alt="${book.title}" width="100"></td>
+            <td th:name="title">
+                <a class="book-row"
+                   th:data-book-isbn="${book.isbn}"
+                   th:data-book-title="${book.title}"
+                   th:data-book-author="${book.author}"
+                   th:data-book-publisher="${book.publisher}"
+                   th:data-book-pubdate="${book.pubdate}"
+                   th:data-book-image="${book.image}"
+                   onclick="selectBook(this)">
+                    [[${book.title}]]
+                </a>
+            </td>
+            <td th:name="author">[[${book.author}]]</td>
+            <td th:name="publisher">[[${book.publisher}]]</td>
+            <td th:name="pubdate">[[${book.pubdate}]]</td>
+            <td th:name="discount">[[${book.discount}]]원</td>
+            <td>
+                <button type="button" th:onclick="'submitForm(' + ${status.index} + ')'" >선택</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<form th:action="@{/request/editAll(reqNo=${reqNo})}" method="POST" id="selectedBookForm">
+    <input type="hidden" id="selectedIsbn" name="isbn" value="">
+    <input type="hidden" id="selectedTitle" name="title" value="">
+    <input type="hidden" id="selectedAuthor" name="author" value="">
+    <input type="hidden" id="selectedPublisher" name="publisher" value="">
+    <input type="hidden" id="selectedPubdate" name="pubdate" value="">
+    <input type="hidden" id="selectedImage" name="image" value="">
+    <input type="hidden" id="selectedDiscount" name="discount" value="">
+    <input type="hidden" id="selectedReqNo" name="reqNo" th:value="${reqNo}">
+</form>
+
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.7/datatables.min.css" rel="stylesheet">
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.7/datatables.min.js"></script>
+<script>
+    $(document).ready(function () {
+// Datatables 초기화
+        var dataTable = $('#bookTable').DataTable({
+            columnDefs: [
+                { targets: 6, width: 65 },
+                { targets: 7, width: 40 }
+            ]
+        })
+    });
+</script>
+<script>
+    function selectBook(element) {
+        var isbn = element.getAttribute("data-book-isbn");
+        var title = element.getAttribute("data-book-title");
+        var author = element.getAttribute("data-book-author");
+        var publisher = element.getAttribute("data-book-publisher");
+        var pubdate = element.getAttribute("data-book-pubdate");
+        var image = element.getAttribute("data-book-image");
+        var discount = element.getAttribute("data-book-discount");
+
+
+        // 선택한 도서 정보를 hidden input에 설정
+        document.getElementById("selectedIsbn").value = isbn;
+        document.getElementById("selectedTitle").value = title;
+        document.getElementById("selectedAuthor").value = author;
+        document.getElementById("selectedPublisher").value = publisher;
+        document.getElementById("selectedPubdate").value = pubdate;
+        document.getElementById("selectedImage").value = image;
+        document.getElementById("selectedDiscount").value = discount;
+
+
+        // 선택한 도서 정보를 출력
+        console.log("Selected Book: ISBN=" + isbn + ", Title=" + title + ", Author=" + author + ", Publisher=" + publisher + ", Pubdate=" + pubdate+", Image=" + image);
+    }
+
+    function submitForm(index) {
+        // DataTable에서 선택한 행 가져오기
+        var selectedRow = $('#bookTable').DataTable().row(index).node();
+
+        if (!selectedRow) {
+            console.error("선택한 행을 찾을 수 없습니다");
+            return;
+        }
+
+        var isbn = $(selectedRow).find("td[name='isbn']").text();
+        var title = $(selectedRow).find("td[name='title'] a").text();
+        var author = $(selectedRow).find("td[name='author']").text();
+        var publisher = $(selectedRow).find("td[name='publisher']").text();
+        var pubdate = $(selectedRow).find("td[name='pubdate']").text();
+        var image = $(selectedRow).find("td[name='image'] img").attr('src');
+        var discount = $(selectedRow).find("td[name='discount']").text();
+
+
+        // 선택한 도서 정보를 hidden input에 설정
+        document.getElementById("selectedIsbn").value = isbn;
+        document.getElementById("selectedTitle").value = title;
+        document.getElementById("selectedAuthor").value = author;
+        document.getElementById("selectedPublisher").value = publisher;
+        document.getElementById("selectedPubdate").value = pubdate;
+        document.getElementById("selectedImage").value = image;
+        document.getElementById("selectedDiscount").value = discount;
+        var reqNo = document.getElementById("selectedReqNo").value;
+        // 폼의 action 속성 설정
+        document.getElementById("selectedBookForm").action = "/request/editAll?reqNo=" + reqNo;
+
+        // 폼 전송
+        document.getElementById("selectedBookForm").submit();
+    }
+</script>
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

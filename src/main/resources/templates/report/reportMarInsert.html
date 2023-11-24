@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>신고하기</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+</head>
+<body>
+<div style="margin:20px;">
+    <div>
+
+        <h4>게시글을 신고하는 이유를 선택해주세요.</h4>
+    </div>
+    <form th:action="@{/report/reportMarPro}" method="post">
+        <div class="form-check">
+            <input class="form-check-input" name="reason" type="radio" value="허위/거짓 정보를 포함하고 있어요." id="flexCheckDefault1" >
+            <label class="form-check-label" for="flexCheckDefault1">
+                허위/거짓 정보를 포함하고 있어요.
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" name="reason" type="radio" value="선정적인 내용을 포함하고 있어요." id="flexCheckDefault2">
+            <label class="form-check-label" for="flexCheckDefault2">
+                선정적인 내용을 포함하고 있어요.
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input"  name="reason" type="radio" value="광고 내용과 연관없는 이미지를 사용하고 있어요." id="flexCheckDefault3" >
+            <label class="form-check-label" for="flexCheckDefault3">
+                광고 내용과 연관없는 이미지를 사용하고 있어요.
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" name="reason" type="radio" value="욕설/비방/혐오 내용이 포함되어 있어요." id="flexCheckDefault6" >
+            <label class="form-check-label" for="flexCheckDefault6">
+                욕설/비방/혐오 내용이 포함되어 있어요.
+            </label>
+        </div>
+        <div class="mb-3">
+            <input class="form-check-input" id="reasonText" name="reason" type="radio" value="" >
+            <label class="form-check-label" for="flexCheckDefault6">
+                기타
+            </label>
+            <textarea name="reason" id="content" class="form-control" placeholder="일어났던 일을 적어주세요." rows="8" cols="100" maxlength="300" oninput="updateValue(this.value)"></textarea>
+        </div>
+        <div style="margin-top: 30px;">
+            <input type="hidden" name="marketNo" id="marketNo" th:value="${marketNo}">
+            <input type="hidden" name="reporter" id="reporter" th:value="${market.loginId}">
+            <input type="hidden" name="title" id="title" th:value="${market.title}">
+            <input type="submit" class="btn btn-block btn-dark btn-lg mt-70" style="height:72px" value="신고">
+        </div>
+    </form>
+    <script>
+        function updateValue(value) {
+            document.getElementById('reasonText').value = value;
+        }
+    </script>
+</div>
+</body>
+</html>

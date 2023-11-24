@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.UserMapper">
+
+    <resultMap id="User" type="com.tsherpa.pro05.entity.User">
+        <result property="id" column="user_id" />
+        <result property="active" column="active" />
+        <result property="loginId" column="login_id" />
+        <result property="userName" column="user_name" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="tel" column="tel" />
+        <result property="addr1" column="addr1" />
+        <result property="addr2" column="addr2" />
+        <result property="postcode" column="postcode" />
+        <result property="regDate" column="reg_date" />
+        <result property="birth" column="birth" />
+        <result property="pt" column="pt" />
+        <result property="visited" column="visited" />
+        <result property="roleId" column="role_id" />
+    </resultMap>
+
+    <resultMap id="UserVO" type="com.tsherpa.pro05.entity.UserVO">
+        <result property="id" column="user_id" />
+        <result property="active" column="active" />
+        <result property="loginId" column="login_id" />
+        <result property="userName" column="user_name" />
+        <result property="password" column="password" />
+        <result property="roleId" column="role_id" />
+        <result property="roleNm" column="roleNm" />
+    </resultMap>
+
+    <select id="findUserListByLoginId" resultMap="UserVO">
+        select *
+        from userlist
+        <where>
+            <if test=" loginId != null and loginId != '' ">
+                and login_id = #{loginId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserByLoginId" resultMap="User">
+        select *
+        from user
+        <where>
+            <if test=" loginId != null and loginId != '' ">
+                and login_id = #{loginId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="userInsert" parameterType="com.tsherpa.pro05.entity.User" useGeneratedKeys="true">
+        insert into user (login_id, user_name, password, email, tel, addr1, addr2, postcode, birth)
+        values (#{param.loginId}, #{param.userName}, #{param.password}, #{param.email}, #{param.tel}, #{param.addr1}, #{param.addr2}, #{param.postcode}, #{param.birth})
+    </insert>
+
+    <select id="userList" resultType="com.tsherpa.pro05.entity.User">
+        select * from user
+        <where>
+            <if test="type != null">
+                <trim prefixOverrides="OR">
+                    <choose>
+                        <when test="type == 'I'.toString()">
+                            login_id LIKE concat('%', #{keyword}, '%')
+                        </when>
+                        <when test="type == 'N'.toString()">
+                            user_name LIKE concat('%', #{keyword}, '%')
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+            AND role_id != 1
+        </where>
+    </select>
+
+    <select id="getCount" resultType="integer">
+        select COUNT(*) from user
+        <where>
+            <if test="type != null">
+                <trim prefixOverrides="OR">
+                    <choose>
+                        <when test="type == 'I'.toString()">
+                            login_id LIKE concat('%', #{keyword}, '%')
+                        </when>
+                        <when test="type == 'N'.toString()">
+                            user_name LIKE concat('%', #{keyword}, '%')
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+            AND role_id != 1
+        </where>
+    </select>
+
+    <!--    회원 정보 수정-->
+    <update id="userEdit" >
+        update user set email= #{email}, tel=#{tel}, addr1=#{addr1}, addr2=#{addr2}, postcode=#{postcode}, birth=#{birth} where login_id =#{loginId}
+    </update>
+    <!-- 비밀번호 변경 -->
+    <update id="pwEdit">
+        update user set password=#{password} where login_id=#{loginId}
+    </update>
+
+    <select id="findId" resultType="com.tsherpa.pro05.entity.User">
+        select login_id from user where email=#{email} and tel=#{tel}
+    </select>
+
+    <select id="cntDeal" resultType="integer">
+        SELECT
+                (SELECT COUNT(*) FROM market WHERE active=1 AND login_id=#{loginId}) +
+                (SELECT COUNT(*) FROM request WHERE active=1 AND login_id=#{loginId}) AS cntDeal;
+    </select>
+
+    <update id="addPt">
+        update user set pt=pt+5 where login_id=#{loginId} and pt &lt; 100
+    </update>
+
+    <update id="minusPt">
+        update user set pt=pt-5 where login_id=#{loginId} and pt &gt; 0
+    </update>
+
+</mapper>

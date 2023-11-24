@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <th:block th:insert="~{layout/head :: head}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+  <title>T셀파</title>
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Spinner End -->
+
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+  <div class="container py-5">
+      <h1 class="display-3 text-white mb-3 animated slideInDown">팝니다</h1>
+      <nav aria-label="breadcrumb animated slideInDown">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+              <li class="breadcrumb-item"><a class="text-white" href="#">장터</a></li>
+              <li class="breadcrumb-item text-white active" aria-current="page">팝니다</li>
+          </ol>
+      </nav>
+  </div>
+</div>
+<div class="container mt-5">
+  <h2 class="mb-4">중고거래 게시글 작성</h2>
+
+  <form th:action="@{/market/edit}" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <h3>"jpg", "jpeg", "png" 형식의 이미지 파일만 첨부가능합니다.</h3>
+      <h2 th:if="${msg}" th:text="${msg}" style="color: red;"></h2>
+      <label for="product_detail_image" class="form-label">대표 이미지</label>
+        <input type="hidden" th:value="${market.marketNo}" name="marketNo">
+      <input class="form-control form-control-user" type="file" multiple="multiple"
+             name="upfile" id="product_detail_image" onchange="setDetailImage(event);" accept="image/*"  oninput="fileMax(this)">
+      <script>
+        function fileMax(input) {
+          var files = input.files;
+
+          if (files.length > 1) {
+            alert("최대 1개의 파일까지만 선택할 수 있습니다.");
+            input.value = ""; // 파일 선택을 초기화합니다.
+          }
+        }
+      </script>
+    </div>
+    <div id="images_container"></div>
+<!--    <img class="col-lg-6" th:each="market: ${mainList}" th:src="${'/market/mainImage?saveFile='+market.getSaveFile()+'&originFile='+market.getOriginFile()+'&saveFolder='+market.getSaveFolder()}">-->
+    <div class="form-group">
+      <label for="product_detail_image2" class="form-label">상세 이미지 (* 첨부되는 파일들만 이미지를 보여줍니다.)</label>
+      <input class="form-control form-control-user" type="file" multiple="multiple"
+             name="detailFile" id="product_detail_image2" onchange="setDetailImage2(event);" accept="image/*"  oninput="fileMax2(this)">
+      <script>
+        function fileMax2(input) {
+          var files = input.files;
+
+          if (files.length > 10) {
+            alert("최대 10개의 파일까지만 선택할 수 있습니다.");
+            input.value = ""; // 파일 선택을 초기화합니다.
+          }
+        }
+      </script>
+    </div>
+    <div id="images_container2">
+<!--      <img class="col-lg-6" th:each="photo : ${photosList}" th:src="${'/market/detailImage?saveFile='+photo.getSaveFile()+'&originFile='+photo.getOriginFile()+'&saveFolder='+photo.getSaveFolder()}">-->
+    </div>
+
+    <div class="mb-3">
+      <label for="title" class="form-label">제목</label>
+      <input type="text" class="form-control" th:value="${market.title}" id="title" name="title" placeholder="제목을 입력하세요" maxlength="90" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="price" class="form-label">가격</label>
+      <input type="number" class="form-control" th:value="${market.price}" id="price" name="price" placeholder="가격을 입력하세요" max="99999900" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="conditions" class="form-label">제품 상태</label>
+      <select class="form-select" id="conditions" th:value="${market.conditions}" name="conditions" required>
+        <option value="0">상</option>
+        <option value="1">중</option>
+        <option value="2">하</option>
+      </select>
+    </div>
+
+    <!-- 내용 입력 -->
+    <div class="mb-3">
+      <label for="content" class="form-label">내용</label>
+      <textarea class="form-control" th:text="${market.content}" id="content" name="content" rows="4" placeholder="내용을 입력하세요" maxlength="2000" required></textarea>
+    </div>
+
+    <!-- 위치 입력 -->
+    <div id="map" style="width:100%;height:400px; position: relative; overflow: hidden; background: rgb(248, 249, 250);" tabindex="0">
+      <div class="search" style="z-index: 999999; position: relative;">
+        <input id="address" type="text" placeholder="검색할 주소" value="" />
+        <input id="submit" type="button" value="주소 검색" />
+      </div>
+    </div>
+    <div>
+      <input type="text" value="" placeholder="선택 위치" th:value="${market.selectedAddress}" id="selectedAddress" name="selectedAddress" style="width: 450px" readonly>
+      <input type="text" value="" placeholder="상세 위치" th:value="${market.detailAddress}" id="detailAddress" name="detailAddress" style="width: 200px"><br>
+      <input type="hidden" value="" placeholder="" th:value="${market.xdata}" id="xdata" name="xdata"> <!-- hidden -->
+      <input type="hidden" value="" placeholder="" th:value="${market.ydata}"id="ydata" name="ydata"> <!-- hidden -->
+      <br>
+    </div>
+
+    <!--            <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=9rw0o1zqhd"></script>-->
+    <!--            <script th:src="@{https://oapi.map.naver.com/openapi/v3/maps.js(ncpClientId=9rw0o1zqhd)}" type="text/javascript"></script>-->
+    <!--            <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=9rw0o1zqhd&callback=CALLBACK_FUNCTION"></script>-->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=9rw0o1zqhd&submodules=geocoder"></script>
+    <script>
+      var latitude, longitude; // 위도, 경도 저장 전역변수
+      var map = new naver.maps.Map('map', {
+        center: new naver.maps.LatLng([[${market.ydata}]], [[${market.xdata}]]),
+        zoom: 17
+      });
+
+      var marker = new naver.maps.Marker({
+        position: new naver.maps.LatLng([[${market.ydata}]], [[${market.xdata}]]),
+        map: map
+
+      });
+      function initMap(lat, lng) {
+        latitude = lat; // 위도 y  Latitude
+        longitude = lng; // 경도 x  Longitude
+
+        // 지도 생성
+        map = new naver.maps.Map('map', {
+          center: new naver.maps.LatLng([[${market.ydata}]], [[${market.xdata}]]),
+          zoom: 17
+        });
+
+        // 마커 생성
+        marker = new naver.maps.Marker({
+          position: new naver.maps.LatLng([[${market.ydata}]], [[${market.xdata}]]),
+          map: map
+
+        });
+
+
+        naver.maps.Event.addListener(map, 'click', function (e) {
+          marker.setPosition(e.coord); //클릭한 위치로 마커 표시
+          searchCoordinateToAddress(e.coord); // 클락한 위치 주소 검색
+        });
+
+        // '주소 검색' 버튼 클릭
+        document.getElementById('submit').addEventListener('click', function() {
+          var address = document.getElementById('address').value;
+          searchAddressToCoordinate(address);
+        });
+        // 주소 검색시 엔터 눌렀을때 처리
+        document.getElementById('address').addEventListener('keydown', function(e) {
+          if (e.keyCode === 13) { // Enter Key
+            e.preventDefault();
+            searchAddressToCoordinate(this.value);
+          }
+        });
+      }
+
+      //현재 위치 가져와서 이동(장치에 GPS없으면 IP주소로 대략적인 위치 검색함)
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            initMap(position.coords.latitude, position.coords.longitude);  // 현재 위치로 지도 생성
+          }, function (error) {
+            console.error('Geolocation error:', error);
+            initMap(37.4787123, 126.8864278); // 현재 위치 못찾을 때 기본 위치 : 마리오 아울렛2관
+          });
+        } else {
+          console.error('Geolocation is not supported by this browser.');
+          initMap(37.4787123, 126.8864278); // 현재 위치 못찾을 때 기본 위치 : 마리오 아울렛2관
+        }
+      }
+
+      //좌표값으로 주소 찾기
+      function searchCoordinateToAddress(latlng) {
+        naver.maps.Service.reverseGeocode({
+          coords: latlng, // 클릭한 위치
+          orders: [
+            naver.maps.Service.OrderType.ADDR,
+            naver.maps.Service.OrderType.ROAD_ADDR
+          ].join(',')
+        }, function(status, response) {
+          if (status !== naver.maps.Service.Status.OK) {
+            console.error('Reverse Geocode Error:', status);
+            return alert('Something Wrong!');
+          }
+
+
+          var address = response.v2.address;
+          // 도로명 주소가 있으면 사용하고, 없으면 지번 주소 사용. 둘 다 없으면 '주소를 찾을 수 없음' 표시
+          var displayAddress = address.roadAddress || address.jibunAddress || '주소를 찾을 수 없음';
+
+          document.getElementById('selectedAddress').value = displayAddress; // input 태그에 값 넣기
+          document.getElementById('xdata').value = latlng._lng; // input 태그에 값 넣기
+          document.getElementById('ydata').value = latlng._lat; // input 태그에 값 넣기
+          // console.log("좌표값: ", latlng); //출력 확인용 테스트
+          // console.log("x값: ", latlng._lng); //출력 확인용 테스트
+          // console.log("y값: ", latlng._lat); //출력 확인용 테스트
+          // console.log("Address: ", displayAddress); //출력 확인용 테스트
+        });
+      }
+
+      // [검색기능] 주소값으로 좌표값 찾고, 지도 이동
+      function searchAddressToCoordinate(address) {
+        naver.maps.Service.geocode({
+          query: address
+        }, function(status, response) {
+          if (status !== naver.maps.Service.Status.OK) {
+            console.error('Geocode Error:', status);
+            return alert('주소 검색 결과가 없습니다.');
+          }
+
+          if (response.v2.meta.totalCount === 0) {
+            return alert('검색된 주소가 없습니다.');
+          }
+
+          var item = response.v2.addresses[0];
+          var point = new naver.maps.LatLng(item.y, item.x);
+
+          map.setCenter(point); //검색한 곳으로 지도 이동
+          // marker.setPosition(point); // 마커 표시
+        });
+      }
+
+      getLocation(); // 호출(현재위치 찾고 지도 호출)
+    </script>
+
+
+
+
+    <button type="submit" class="btn btn-dark">작성하기</button>
+  </form>
+</div>
+
+<script>
+  function setThumbnail(event){
+    var reader = new FileReader();
+
+    reader.onload = function(event){
+      var img = document.createElement("img");
+      img.setAttribute("src", event.target.result);
+      img.setAttribute("class", "col-lg-6");
+      document.querySelector("div#image_container").appendChild(img);
+    };
+
+    reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+
+<script>
+  function setDetailImage(event) {
+    var files = event.target.files;
+    var imagesContainer = document.getElementById("images_container");
+    imagesContainer.innerHTML = "";  // 이미지를 모두 제거
+
+    for (var i = 0; i < files.length; i++) {
+      var img = document.createElement("img");
+      img.setAttribute("class", "col-lg-6");
+
+      // File 객체에서 미리보기 URL 생성
+      img.src = URL.createObjectURL(files[i]);
+
+      imagesContainer.appendChild(img);
+    }
+  }
+
+  function setDetailImage2(event) {
+    var files = event.target.files;
+    var imagesContainer = document.getElementById("images_container2");
+    imagesContainer.innerHTML = "";  // 이미지를 모두 제거
+
+    for (var i = 0; i < files.length; i++) {
+      var img = document.createElement("img");
+      img.setAttribute("class", "col-lg-6");
+
+      // File 객체에서 미리보기 URL 생성
+      img.src = URL.createObjectURL(files[i]);
+
+      imagesContainer.appendChild(img);
+    }
+  }
+</script>
+<!-- content 영역 종료 -->
+<script th:src="@{/js/common.js}"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</body>
+</html>

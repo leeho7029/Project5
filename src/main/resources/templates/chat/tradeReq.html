@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <th:block th:insert="~{layout/head :: head}"></th:block>
+        <link rel="stylesheet" th:href="@{/css/sub.css}">
+        <title>T셀파::</title>
+    </head>
+    <body>
+        <!-- content 영역 시작 -->
+        <h2 class="text-center" th:text="${request.title}"></h2>
+        <div class="mb-4 mx-4">
+            <select class="form-select" name="active" id="productActive">
+                <option value="0" th:selected="${request.active} == 0">거래 미완료</option>
+                <option value="1" th:selected="${request.active} == 1">거래 완료</option>
+            </select>
+        </div>
+        <div>
+            <button class="btn btn-block" onclick="check()" style="margin: 0 auto; font-weight: 200; width: 130px">닫기</button>
+        </div>
+        <script>
+            let reqNo = [[${request.reqNo}]];
+            function check(){ window.close(); }
+            $(function() {
+                $("#productActive").on("change", function() {
+                    let active = parseInt($("#productActive").val());
+                    let params = {"active" : active, "reqNo" : reqNo};
+                    $.ajax({
+                        url:"/chat/tradeReqPro",
+                        type:"post",
+                        data:params,
+                        success : function(result) {},
+                    });
+                });
+            });
+        </script>
+        <!-- content 영역 종료 -->
+    </body>
+</html>

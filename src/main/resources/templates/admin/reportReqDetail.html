@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+    <title>신고내역 상세보기</title>
+    <link rel="shortcut icon" th:href="@{/image/common/logo.ico}">
+    <link rel="stylesheet" th:href="@{/css/styles.min.css}" />
+    <script src="https://kit.fontawesome.com/153ada4eea.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <th:block th:insert="~{layout/adminSide :: adminSide}"></th:block>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper" style="background-color: #e6e6fa4d;">
+        <!--  Header Start -->
+        <th:block th:insert="~{layout/adminHeader :: adminHeader}"></th:block>
+        <!--  Header End -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-7">
+                    <div class="col-lg-6 quote-text py-5 wow fadeIn" data-wow-delay="0.5s">
+                        <img th:src="${request.bookImage}" alt="bookImage">
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="row" style="margin-top: 100px;">
+                        <div class="col-12 col-sm-6">
+                            <label for="title" class="form-label">제목</label>
+                            <input type="text" class="form-control border-1" id="title" name="title" th:value="${request.title}" readonly style="height: 55px;">
+                            <input type="hidden" class="form-control border-0" id="reqNo" th:value="${request.reqNo}" readonly style="height: 55px;">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label for="price" class="form-label">희망가격</label>
+                            <input type="text" class="form-control border-1" id="price" th:value="${request.price}" readonly style="height: 55px;">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label for="discount" class="form-label">최저가격</label>
+                            <input type="text" class="form-control border-1" id="discount" th:value="${request.discount}" readonly style="height: 55px;">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label for="loginId" class="form-label">작성자</label>
+                            <input type="text" class="form-control border-1" id="loginId" th:value="${request.loginId}" readonly style="height: 55px;">
+                            <input type="hidden" class="form-control border-1" id="reporter" name="reporter" th:value="${request.loginId}" readonly style="height: 55px;">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label for="addr" class="form-label">거래희망지역</label>
+                            <input type="text" class="form-control border-1" id="addr" th:value="${request.addr}" readonly style="height: 55px;">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label for="addr" class="form-label">작성일</label>
+                            <input type="text" class="form-control border-1" id="regdate" th:value="${request.regdate}" readonly style="height: 55px;">
+                        </div>
+                        <div class="col-12">
+                            <label for="content" class="form-label">내용</label>
+                            <input class="form-control border-4" id="content" th:value="${request.content}" readonly style="height: 150px;">
+                        </div>
+                        <div class="col-12">
+                            <label for="readable" class="form-label">열람</label>
+                            <select class="form-select m-2" name="readable" id="readable">
+                                <option th:value="0" th:selected="${request.readable == 0}">열람가능</option>
+                                <option th:value="1" th:selected="${request.readable == 1}">열람불가능</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <a class="btn btn-primary m-2 col-12" th:href="@{/request/delete(reqNo=${request.reqNo})}" type="button">삭제하기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="container">
+                <h5>신고 - 사유</h5>
+                <div>
+                    <table class="table table-striped">
+                        <thead class="text-dark fs-4">
+                        <tr>
+                            <th class="border-bottom-0" width="80">
+                                <h6 class="fw-semibold mb-0">#</h6>
+                            </th>
+                            <th class="border-bottom-0" width="600">
+                                <h6 class="fw-semibold mb-0">사유</h6>
+                            </th>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">누적신고수</h6>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report, rpStat : ${list}">
+                            <td class="border-bottom-0"><h6 class="fw-semibold mb-0" th:text="${rpStat.index}"></h6></td>
+                            <td class="border-bottom-0">
+                                <p class="mb-0 fw-normal" th:text="${report.reason}"></p>
+                            </td>
+                            <td class="border-bottom-0">
+                                <p class="mb-0 fw-normal" th:text="${report.reasonCount}"></p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+<script>
+    // let token = $("meta[name='_csrf']").attr("content");
+    // let header = $("meta[name='_csrf_header']").attr("content");
+    // $(document).ajaxSend(function(e, xhr, options) {
+    //     xhr.setRequestHeader(header, token);
+    // });
+
+    $(function() {
+        $("#readable").on("change", function() {
+            let readable = parseInt($("#readable").val());
+            var reqNo = $("#reqNo").val();
+            let params = {"readable" : readable, "reqNo" : reqNo };
+            $.ajax({
+                url:"/admin/readableUpdate",
+                type:"post",
+                data:params,
+                success : function(result) {},
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <th:block th:insert="~{layout/head :: head}"></th:block>
+        <link rel="stylesheet" th:href="@{/css/sub.css}">
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+        <title>T셀파::</title>
+    </head>
+    <body>
+        <th:block th:insert="~{layout/header :: header}"></th:block>
+
+        <!-- content 영역 시작 -->
+        <div class="container text-center my-5" style="min-height:75vh;">
+            <div class="row my-5">
+                <div class="col">
+                    <h2 th:if="${myChat}">내 채팅방</h2>
+                    <h2 th:unless="${myChat}" th:text="'[ ' + ${productNm} + ' ] 제품 채팅방'"></h2>
+
+                    <table class="table mt-5">
+                        <tbody>
+                        <tr th:each="room : ${roomList}">
+                            <td class="text-start">
+                                <a th:if="${myChat}" th:href="@{/chat/getChat/{roomId}(roomId=${room.getRoomId()})}" th:text="${'[ ' + room.productName + ' ] ' + room.getBuyerId() + '님과의 채팅'}"></a>
+                                <a th:unless="${myChat}" th:href="@{/chat/getChat/{roomId}(roomId=${room.getRoomId()})}" th:text="${'[ ' + productNm + ' ] ' + room.getBuyerId() + '님과의 채팅'}"></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- content 영역 종료 -->
+
+        <th:block th:insert="~{layout/footer :: footer}"></th:block>
+        <script th:src="@{/js/sub.js}"></script>
+    </body>
+</html>

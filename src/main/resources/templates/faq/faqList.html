@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>FAQ</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/faq.css}">
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5" style="margin-bottom:0px !important;">
+    <div class="container py-5">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">FAQ</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-white" href="../">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">FAQ</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">목록</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- faqList start-->
+<section>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div id="accordion" class="accordion-style">
+                    <th:block th:each="faq : ${list}">
+                        <div class="card mb-3">
+                            <div class="card-header" th:id="'heading' + ${faq.fno}">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link collapsed" data-bs-toggle="collapse"
+                                            th:data-bs-target="'#collapse' + ${faq.fno}" aria-expanded="false"
+                                            th:aria-controls="'collapse' + ${faq.fno}">
+                                        <span class="text-theme-secondary me-2" th:text="'Q.&nbsp;'+ ${faq.question}"></span>
+                                    </button>
+                                </h5>
+                            </div>
+                            <div th:id="'collapse' + ${faq.fno}" class="collapse"
+                                 th:aria-labelledby="'heading' + ${faq.fno}" style="background-color: #ffffff;">
+                                <div class="card-body">[[${faq.answer}]]</div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- faqList end-->
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

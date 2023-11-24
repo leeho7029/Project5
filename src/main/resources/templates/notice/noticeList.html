@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>공지사항 목록</title>
+    <th:block th:insert="~{layout/head :: head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        #title {color:#000000; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:700px; }
+    </style>
+</head>
+<body>
+<th:block th:insert="~{layout/header :: header}"></th:block>
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-5 mb-5">
+    <div class="container py-5">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">공지사항</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-white" href="../">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">공지사항</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">목록</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- noticeList start-->
+<div class="container-xxl py-5">
+    <div class="container">
+        <table class="table" style="width:85%; margin:0 auto;">
+            <thead>
+            <tr>
+                <th scope="col" width="80">#</th>
+                <th scope="col" width="600">제목</th>
+                <th scope="col">등록일</th>
+                <th scope="col">작성자</th>
+                <th scope="col">조회수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="notice, noticeStat : ${list}">
+                <th scope="row" th:text="${noticeStat.index}"></th>
+                <td ><a th:text="${notice.title}" th:href="@{/notice/detail(no = ${notice.no})}" id="title" ></a></td>
+                <td th:text="${#dates.format(notice.regdate,'yyyy-MM-dd')}"></td>
+                <td th:text="관리자"></td>
+                <td th:text="${notice.cnt}"></td>
+            </tr>
+            <tr th:if="${list.isEmpty()}">
+                <td colspan="6">공지사항이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div style="margin-top: 30px;" th:if="${!list.isEmpty()}">
+        <ul class="pagination justify-content-center mb-0">
+            <li th:if="${curPage > 5}" class="page-item">
+                <a th:href="@{|/notice/list?page=${page.blockStartNum - 1}|}" class="page-link">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+            </li>
+            <th:block th:each="i: ${#numbers.sequence(page.blockStartNum, page.blockLastNum)}">
+                <li th:class="${i == curPage} ? 'page-item active' : 'page-item'">
+                    <a th:href="@{|/notice/list?page=${i}|}" class="page-link" aria-label="Page ${i}" aria-current="${i == curPage}" th:text="${i}"></a>
+                </li>
+            </th:block>
+            <li th:if="${page.blockLastNum < page.totalPageCount}" class="page-item">
+                <a th:href="@{|/notice/list?page=${page.blockLastNum + 1}|}" class="page-link">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+<!-- noticeList end-->
+</div>
+
+<th:block th:insert="~{layout/footer :: footer}"></th:block>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

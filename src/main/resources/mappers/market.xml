@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.MarketMapper">
+
+    <insert id="marketInsert" >
+        insert into market(login_id, title, content,price,conditions,selected_address,detail_address,xdata,ydata)
+        values(#{loginId}, #{title}, #{content}, #{price}, #{conditions},#{selectedAddress},#{detailAddress},#{xdata},#{ydata})
+        <selectKey resultType="int" keyProperty="marketNo" order="AFTER">
+            select LAST_INSERT_ID() as marketNo
+        </selectKey>
+    </insert>
+
+    <select id="marketList" resultType="com.tsherpa.pro05.entity.Market">
+        select * from market order by regdate desc
+    </select>
+
+    <select id="marketDetail" resultType="com.tsherpa.pro05.entity.Market">
+        select * from market where marketNo=#{marketNo}
+    </select>
+
+
+    <select id="mainVOList" resultType="com.tsherpa.pro05.entity.MainVO">
+        select * from mainlist
+        <where>
+        <if test="type != null">
+            <trim prefixOverrides="OR">
+                <choose>
+                    <when test="type == 'T'.toString()">
+                        title LIKE concat('%', #{keyword}, '%')
+                    </when>
+                    <when test="type == 'R'.toString()">
+                        content LIKE concat('%', #{keyword}, '%')
+                    </when>
+                    <when test="type == 'Y'.toString()">
+                        login_id LIKE contcat('%', #{keyword}, '%')
+                    </when>
+                </choose>
+            </trim>
+         </if>
+           AND readable = 0
+        </where>
+        order by regdate desc limit #{postStart}, #{postCount}
+    </select>
+
+    <select id="detailVOList" resultType="com.tsherpa.pro05.entity.DetailVO">
+        select * from detaillist where marketNo = #{marketNo}
+    </select>
+
+    <select id="chatVOList" resultType="com.tsherpa.pro05.entity.MainVO">
+        select * from mainlist where marketNo = #{marketNo}
+    </select>
+
+    <select id="mainlistForDetailVOList" resultType="com.tsherpa.pro05.entity.MainVO">
+        select * from mainlist where marketNo = #{marketNo}
+    </select>
+
+    <delete id="marketDelete">
+        delete from market where marketNo=#{marketNo}
+    </delete>
+
+
+    <update id="marketEdit">
+        update market
+        set title=#{title}, content=#{content},price=#{price},conditions=#{conditions},selected_address=#{selectedAddress},detail_address=#{detailAddress},xdata=#{xdata},ydata=#{ydata}
+        where marketNo = #{marketNo}
+    </update>
+
+    <update id="readable">
+        UPDATE market SET readable=#{readable} WHERE marketNo=#{marketNo}
+    </update>
+
+    <update id="updateActive">
+        UPDATE market SET active=#{active} WHERE marketNo=#{marketNo}
+    </update>
+
+    <select id="cntSell" resultType="int">
+        select count(*) from market where login_id = #{loginId}
+    </select>
+
+    <select id="userMainVOList" resultType="com.tsherpa.pro05.entity.MainVO">
+        select * from mainlist where login_id = #{loginId} order by regdate desc
+    </select>
+
+    <select id="getMarketCnt" resultType="Integer">
+        select count(*) from market
+    </select>
+
+    <select id="getMarketListForMain" resultType="com.tsherpa.pro05.entity.MainVO">
+        select * from mainlist order by regdate desc limit 3
+    </select>
+
+    <select id="mainListCount" resultType="integer">
+        SELECT COUNT(*) FROM mainlist
+    </select>
+
+    <select id="likeMarketList" resultType="com.tsherpa.pro05.entity.MainVO">
+        select m.* from mainlist m join likes l on m.marketNo  = l.marketNo where l.login_id = #{loginId}
+    </select>
+
+    <select id="getInfo" resultType="com.tsherpa.pro05.entity.MainVO">
+        select * from mainlist where login_id = #{loginId}
+    </select>
+
+    <select id="getMarCount" resultType="Integer">
+        select COUNT(*) from market
+        <where>
+            <if test="type != null">
+                <trim prefixOverrides="OR">
+                    <choose>
+                        <when test="type == 'T'.toString()">
+                            title LIKE concat('%', #{keyword}, '%')
+                        </when>
+                        <when test="type == 'R'.toString()">
+                            content LIKE concat('%', #{keyword}, '%')
+                        </when>
+                        <when test="type == 'Y'.toString()">
+                            login_id LIKE contcat('%', #{keyword}, '%')
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+            AND readable = 0
+        </where>
+    </select>
+</mapper>

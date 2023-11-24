@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.LikesMapper">
+
+    <resultMap id="Likes" type="com.tsherpa.pro05.entity.Likes">
+        <result property="lno" column="lno" />
+        <result property="loginId" column="login_id" />
+        <result property="marketNo" column="marketNo" />
+        <result property="reqNo" column="req_no" />
+        <result property="liketime" column="liketime" />
+    </resultMap>
+
+    <select id="checkLikedMar" resultType="integer">
+        SELECT count(*) FROM likes WHERE login_id = #{loginId} AND marketNo = #{marketNo}
+    </select>
+
+    <select id="checkLikedReq" resultType="integer">
+        SELECT count(*) FROM likes WHERE login_id = #{loginId} AND req_no = #{reqNo}
+    </select>
+
+    <delete id="removeLikeMar">
+        delete from likes WHERE login_id = #{loginId} AND marketNo = #{marketNo}
+    </delete>
+
+    <delete id="removeLikeReq">
+        delete from likes WHERE login_id = #{loginId} AND req_no = #{reqNo}
+    </delete>
+
+    <insert id="addLikeMar">
+        insert into likes (login_id, marketNo, liketime)values (#{loginId},#{marketNo}, default)
+    </insert>
+
+    <insert id="addLikeReq">
+        insert into likes (login_id, req_no, liketime)values (#{loginId}, #{reqNo}, default)
+    </insert>
+
+    <select id="marketLikeList" resultType="com.tsherpa.pro05.entity.Likes">
+        select a.marketNo, a.login_id, a.liketime, b.title
+        from likes a join market b on b.marketNo=b.marketNo where a.login_id = #{loginId} order by liketime desc
+    </select>
+
+    <select id="requestLikeList" resultType="com.tsherpa.pro05.entity.Likes">
+        select a.req_no, a.login_id, a.liketime, b.title
+        from likes a join request b on b.req_no=b.req_no where a.login_id = #{loginId} order by liketime desc
+    </select>
+
+</mapper>

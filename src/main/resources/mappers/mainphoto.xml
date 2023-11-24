@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.MainphotoMapper">
+    <insert id="mainphotoInsert">
+        insert into mainphoto(marketNo, savefolder, originfile, savefile)
+        values
+        <foreach collection="mainphotoList" item="mainphoto" separator=" , ">
+            (#{marketNo}, #{mainphoto.saveFolder}, #{mainphoto.originFile}, #{mainphoto.saveFile})
+        </foreach>
+    </insert>
+
+    <delete id="mainphotoDelete">
+        delete from mainphoto where marketNo=#{marketNo}
+    </delete>
+
+    <update id="mainphotoEdit">
+        update mainphoto
+        set
+        <foreach collection="mainphotoList" item="mainphoto" separator=" , ">
+            marketNo = #{marketNo},
+            savefolder = #{mainphoto.saveFolder},
+            originfile = #{mainphoto.originFile},
+            savefile = #{mainphoto.saveFile}
+        </foreach>
+    </update>
+
+    <select id="mainphotoList" resultType="com.tsherpa.pro05.entity.Mainphoto">
+        select * from mainphoto where marketNo=#{marketNo}
+    </select>
+</mapper>

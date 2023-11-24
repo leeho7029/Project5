@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tsherpa.pro05.per.RequestMapper">
+    <resultMap id="User" type="com.tsherpa.pro05.entity.Request">
+        <result property="loginId" column="login_id" />
+        <result property="reqNo" column="req_no" />
+    </resultMap>
+
+    <insert id="requestInsert" >
+        insert into request(login_id, title, content,price,addr,bookTitle,bookAuthor,publisher,isbn,pubdate,discount,bookImage)
+        values(#{loginId}, #{title}, #{content}, #{price}, #{addr},#{bookTitle},#{bookAuthor},#{publisher},#{isbn},#{pubdate},#{discount},#{bookImage})
+        <selectKey resultType="int" keyProperty="reqNo" order="AFTER" >
+            SELECT LAST_INSERT_ID() AS reqNo
+        </selectKey>
+    </insert>
+
+    <select id="requestList" resultType="com.tsherpa.pro05.entity.Request">
+        select * from request
+        <where>
+        <if test="type != null">
+            <trim prefixOverrides="OR">
+                <choose>
+                    <when test="type == 'T'.toString()">
+                        title LIKE concat('%', #{keyword}, '%')
+                    </when>
+                    <when test="type == 'R'.toString()">
+                        content LIKE concat('%', #{keyword}, '%')
+                    </when>
+                    <when test="type == 'Y'.toString()">
+                        login_id LIKE contcat('%', #{keyword}, '%')
+                    </when>
+                </choose>
+            </trim>
+        </if>
+        AND readable = 0
+        </where>
+        order by regdate desc limit #{postStart}, #{postCount}
+    </select>
+
+    <select id="requestDetail" resultType="com.tsherpa.pro05.entity.Request">
+        select * from request where req_no=#{reqNO}
+    </select>
+
+    <select id="getMoreRequests" resultType="com.tsherpa.pro05.entity.Request">
+        SELECT * FROM request
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <update id="requestEdit">
+        update request set title=#{title}, content=#{content}, price=#{price},addr=#{addr} where req_no=#{reqNo}
+    </update>
+
+    <update id="requestEditAll">
+        update request set title=#{title}, content=#{content}, price=#{price},addr=#{addr},bookTitle=#{bookTitle},bookAuthor=#{bookAuthor},publisher=#{publisher},isbn=#{isbn},pubdate=#{pubdate},discount=#{discount},bookImage=#{bookImage} where req_no=#{reqNo}
+    </update>
+
+    <update id="updateActive">
+        UPDATE request SET active=#{active} WHERE req_no=#{reqNo}
+    </update>
+
+    <delete id="requestDelete">
+        delete from request where req_no=#{reqNo}
+    </delete>
+
+<!--    유저의 다른 요청사항-->
+    <select id="allRequest" resultType="com.tsherpa.pro05.entity.Request">
+        select * from request where login_id = #{loginId} order by regdate desc
+    </select>
+
+    <update id="readable">
+        UPDATE request SET readable=#{readable} WHERE req_no=#{reqNo}
+    </update>
+
+    <select id="userRequestList" resultType="com.tsherpa.pro05.entity.Request">
+        select * from request where login_id = #{loginId} order by regdate desc
+    </select>
+
+    <select id="getRequestCnt" resultType="Integer">
+        select count(*) from request
+    </select>
+
+    <select id="getRequestListForMain" resultType="com.tsherpa.pro05.entity.Request">
+        select * from request order by regdate desc limit 3
+    </select>
+
+    <select id="getReqCount" resultType="Integer">
+        select COUNT(*) from request
+        <where>
+            <if test="type != null">
+                <trim prefixOverrides="OR">
+                    <choose>
+                        <when test="type == 'T'.toString()">
+                            title LIKE concat('%', #{keyword}, '%')
+                        </when>
+                        <when test="type == 'R'.toString()">
+                            content LIKE concat('%', #{keyword}, '%')
+                        </when>
+                        <when test="type == 'Y'.toString()">
+                            login_id LIKE contcat('%', #{keyword}, '%')
+                        </when>
+                    </choose>
+                </trim>
+            </if>
+            AND readable = 0
+        </where>
+    </select>
+
+
+    <select id="likeRequestList" resultType="com.tsherpa.pro05.entity.Request">
+        select r.* from request r join likes l on r.req_no =l.req_no where l.login_id = #{loginId}
+    </select>
+    <select id="getInfo" resultType="com.tsherpa.pro05.entity.Request">
+        select * from request where login_id = #{loginId}
+    </select>
+
+</mapper>

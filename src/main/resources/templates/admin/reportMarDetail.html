@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+    <title>신고내역 상세보기</title>
+    <link rel="shortcut icon" th:href="@{/image/common/logo.ico}">
+    <link rel="stylesheet" th:href="@{/css/styles.min.css}" />
+    <script src="https://kit.fontawesome.com/153ada4eea.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <th:block th:insert="~{layout/adminSide :: adminSide}"></th:block>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper" style="height: 100vh;">
+        <!--  Header Start -->
+        <th:block th:insert="~{layout/adminHeader :: adminHeader}"></th:block>
+        <!--  Header End -->
+        <div class="container-fluid">
+            <div class="section-title text-start">
+                <h1 class="display-5 mb-4">상세보기</h1>
+            </div>
+            <div class="row g-3">
+                <div class="col-12 col-sm-6">
+                    <!--                <input type="text" th:value="${market.title}" class="form-control border-0" placeholder="상품이름" style="height: 55px;">-->
+                    <p th:text="${market.title}"></p>
+                    <input type="hidden" id="marketNo" name="marketNo" th:value="${market.marketNo}">
+                </div>
+                <div class="col-12 col-sm-6">
+                    <!--                <input type="text" class="form-control border-0" placeholder="상품 가격" style="height: 55px;">-->
+                    <p th:text="${market.price+' 원'}"></p>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <!--                <input type="text" class="form-control border-0" placeholder="작성자" style="height: 55px;">-->
+                    <p th:text="${market.loginId}"></p>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <!--                <input type="text" class="form-control border-0" placeholder="상품상태" style="height: 55px;">-->
+                    <p th:text="${'상태 : '+market.conditions}"></p>
+                </div>
+                <div class="col-12">
+                    <!--                <textarea class="form-control border-0" placeholder="상품설명" style="height: 150px;"></textarea>-->
+                    <p th:text="${market.content}"></p>
+                </div>
+
+                <div id="map" style="width:100%;height:400px; position: relative; overflow: hidden; background: rgb(248, 249, 250);" tabindex="0">
+
+                </div>
+                <div>
+                    <p th:text="${market.selectedAddress}"></p>
+                    <p th:text="${market.detailAddress}"></p>
+                    <!--                  <input type="text" th:value="${market.selectedAddress}" placeholder="선택 위치" id="selectedAddress" name="selectedAddress" style="width: 300px" readonly>-->
+                    <!--                <input type="text" th:value="${market.detailAddress}" placeholder="상세 위치" id="detailAddress" name="detailAddress"><br>-->
+                </div>
+                <div class="col-12">
+                    <label for="readable" class="form-label">열람</label>
+                    <select class="form-select m-2" name="readable" id="readable">
+                        <option th:value="0" th:selected="${market.readable == 0}">열람가능</option>
+                        <option th:value="1" th:selected="${market.readable == 1}">열람불가능</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <a class="btn btn-primary m-2 col-12" th:href="@{/market/delete(marketNo=${market.marketNo})}" type="button">삭제하기</a>
+                </div>
+
+                <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=9rw0o1zqhd&submodules=geocoder"></script>
+                <script th:inline="javascript">
+
+                    var map = new naver.maps.Map('map', {
+                        center: new naver.maps.LatLng([[${market.ydata}]], [[${market.xdata}]]),
+                        zoom: 17
+                    });
+
+                    var marker = new naver.maps.Marker({
+                        position: new naver.maps.LatLng([[${market.ydata}]], [[${market.xdata}]]),
+                        map: map
+
+                    });
+
+
+
+                    // '주소 검색' 버튼 클릭
+                    document.getElementById('submit').addEventListener('click', function() {
+                        var address = document.getElementById('address').value;
+                        searchAddressToCoordinate(address);
+                    });
+                    // 주소 검색시 엔터 눌렀을때 처리
+                    document.getElementById('address').addEventListener('keydown', function(e) {
+                        if (e.keyCode === 13) { // Enter Key
+                            e.preventDefault();
+                            searchAddressToCoordinate(this.value);
+                        }
+                    });
+                    function searchAddressToCoordinate(address) {
+                        naver.maps.Service.geocode({
+                            query: address
+                        }, function(status, response) {
+                            if (status !== naver.maps.Service.Status.OK) {
+                                console.error('Geocode Error:', status);
+                                return alert('주소 검색 결과가 없습니다.');
+                            }
+
+                            if (response.v2.meta.totalCount === 0) {
+                                return alert('검색된 주소가 없습니다.');
+                            }
+
+                            var item = response.v2.addresses[0];
+                            var point = new naver.maps.LatLng(item.y, item.x);
+
+                            map.setCenter(point); //검색한 곳으로 지도 이동
+                            // marker.setPosition(point); // 마커 표시
+                        });
+                    }
+
+
+                </script>
+            <hr>
+            <div class="container">
+                <h5>신고 - 사유</h5>
+                <div>
+                    <table class="table table-striped">
+                        <thead class="text-dark fs-4">
+                        <tr>
+                            <th class="border-bottom-0" width="80">
+                                <h6 class="fw-semibold mb-0">#</h6>
+                            </th>
+                            <th class="border-bottom-0" width="600">
+                                <h6 class="fw-semibold mb-0">사유</h6>
+                            </th>
+                            <th class="border-bottom-0">
+                                <h6 class="fw-semibold mb-0">누적신고수</h6>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="report, rpStat : ${list}">
+                            <td class="border-bottom-0"><h6 class="fw-semibold mb-0" th:text="${rpStat.index}"></h6></td>
+                            <td class="border-bottom-0">
+                                <p class="mb-0 fw-normal" th:text="${report.reason}"></p>
+                            </td>
+                            <td class="border-bottom-0">
+                                <p class="mb-0 fw-normal" th:text="${report.reasonCount}"></p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+<script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+<script>
+    // let token = $("meta[name='_csrf']").attr("content");
+    // let header = $("meta[name='_csrf_header']").attr("content");
+    // $(document).ajaxSend(function(e, xhr, options) {
+    //     xhr.setRequestHeader(header, token);
+    // });
+
+    $(function() {
+        $("#readable").on("change", function() {
+            let readable = parseInt($("#readable").val());
+            let marketNo = parseInt($("#marketNo").val());
+
+            let params = {"readable" : readable, "marketNo" : marketNo };
+            $.ajax({
+                url:"/admin/readableUpdateMar",
+                type:"post",
+                data:params,
+                success : function(result) {},
+            });
+        });
+    });
+</script>
+</div>
+</body>
+</html>

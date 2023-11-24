@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+      <th:block th:insert="~{layout/head :: head}"></th:block>
+      <link rel="stylesheet" th:href="@{/css/sub.css}">
+      <title>T셀파::로그인</title>
+    </head>
+  <body>
+
+      <!-- content 영역 시작 -->
+      <section class="vh-100 bg-primary">
+          <div class="container py-5 h-100">
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                  <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                      <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                          <div class="card-body p-5 text-center">
+                                <form th:action="@{/findId}" method="post">
+                                      <div class="form-outline mb-4 text-center">
+                                          <a th:href="@{/}"><img th:src="@{/image/common/logo.png}" style="width:30%" /></a>
+                                      </div>
+                                        <div style="margin-top: 30px">
+                                            <p>아이디 찾기</p>
+                                        </div>
+                                      <div class="form-outline mb-4">
+                                          <input type="email" placeholder="이메일을 입력하세요" class="form-control" id="email" name="email" required />
+                                          <label class="form-label" for="email" style="display:none;">이메일</label>
+                                      </div>
+
+                                      <div class="form-outline mb-4">
+                                          <input type="tel" placeholder="전화번호를 입력하세요" class="form-control" id="tel" name="tel" required />
+                                          <label class="form-label" for="tel" style="display:none;">전화번호</label>
+                                      </div>
+                                      <!-- Submit button -->
+                                      <button type="submit" class="btn btn-primary btn-block mb-4">찾기</button>
+                                      <a class="btn btn-primary btn-block mb-4" th:href="@{/login}">로그인</a>
+                                </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <!-- content 영역 종료 -->
+
+      <script th:src="@{/js/sub.js}"></script>
+      <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  </body>
+</html>
